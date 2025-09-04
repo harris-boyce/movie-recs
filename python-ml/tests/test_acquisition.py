@@ -114,9 +114,7 @@ class TestDatasetDownloader(unittest.TestCase):
         downloader = DatasetDownloader(str(config_file))
 
         target_path = self.temp_path / "test_download.txt"
-        result = downloader._download_with_progress(
-            "http://example.com/file.txt", target_path
-        )
+        result = downloader._download_with_progress("http://example.com/file.txt", target_path)
 
         self.assertEqual(result, target_path)
         self.assertTrue(target_path.exists())
@@ -147,9 +145,7 @@ class TestDatasetDownloader(unittest.TestCase):
         self.assertTrue(downloader._verify_file_integrity(test_file, expected_checksum))
 
         # Test invalid checksum
-        self.assertFalse(
-            downloader._verify_file_integrity(test_file, "invalid_checksum")
-        )
+        self.assertFalse(downloader._verify_file_integrity(test_file, "invalid_checksum"))
 
     def test_metadata_update(self):
         """Test metadata tracking."""

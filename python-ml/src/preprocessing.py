@@ -8,10 +8,10 @@ feature engineering, and multiple export formats for ML training.
 import json
 import logging
 import re
+import warnings
 from collections import Counter
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
-import warnings
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -27,7 +27,6 @@ except ImportError:
     warnings.warn("Pandas not available, some features will be limited")
 
 from .schema import Genre, Movie
-
 
 logger = logging.getLogger(__name__)
 
@@ -104,12 +103,7 @@ class FeatureEngineer:
             text_features = self.text_vectorizer.fit_transform(cleaned_texts)
 
             # Store feature names
-            self.feature_names.extend(
-                [
-                    f"text_{name}"
-                    for name in self.text_vectorizer.get_feature_names_out()
-                ]
-            )
+            self.feature_names.extend([f"text_{name}" for name in self.text_vectorizer.get_feature_names_out()])
 
         else:
             text_features = self.text_vectorizer.transform(cleaned_texts)
@@ -173,19 +167,12 @@ class FeatureEngineer:
 
         for movie in movies:
             movie_genres = [genre.value for genre in movie.genres]
-            genre_vector = [
-                1 if genre in movie_genres else 0 for genre in self.genre_encoder
-            ]
+            genre_vector = [1 if genre in movie_genres else 0 for genre in self.genre_encoder]
             genre_matrix.append(genre_vector)
 
         # Store feature names
         if fit:
-            self.feature_names.extend(
-                [
-                    f"genre_{genre.lower().replace(' ', '_')}"
-                    for genre in self.genre_encoder
-                ]
-            )
+            self.feature_names.extend([f"genre_{genre.lower().replace(' ', '_')}" for genre in self.genre_encoder])
 
         return np.array(genre_matrix, dtype=np.float32)
 
@@ -226,18 +213,14 @@ class FeatureEngineer:
         decade_array = np.array(decades, dtype=np.float32).reshape(-1, 1)
         if "decade_scaler" not in self.scalers:
             self.scalers["decade_scaler"] = StandardScaler()
-            normalized_decades = self.scalers["decade_scaler"].fit_transform(
-                decade_array
-            )
+            normalized_decades = self.scalers["decade_scaler"].fit_transform(decade_array)
         else:
             normalized_decades = self.scalers["decade_scaler"].transform(decade_array)
 
         self.feature_names.append("decade_normalized")
 
         # Combine categorical and normalized features
-        result = np.hstack(
-            [np.array(decade_matrix, dtype=np.float32), normalized_decades]
-        )
+        result = np.hstack([np.array(decade_matrix, dtype=np.float32), normalized_decades])
 
         logger.info(f"Generated {result.shape[1]} decade features")
         return result
@@ -275,13 +258,9 @@ class FeatureEngineer:
         # Normalize runtime
         if "runtime_scaler" not in self.scalers:
             self.scalers["runtime_scaler"] = StandardScaler()
-            normalized_runtime = self.scalers["runtime_scaler"].fit_transform(
-                runtimes.reshape(-1, 1)
-            )
+            normalized_runtime = self.scalers["runtime_scaler"].fit_transform(runtimes.reshape(-1, 1))
         else:
-            normalized_runtime = self.scalers["runtime_scaler"].transform(
-                runtimes.reshape(-1, 1)
-            )
+            normalized_runtime = self.scalers["runtime_scaler"].transform(runtimes.reshape(-1, 1))
 
         # Combine features
         features = np.hstack(
@@ -344,9 +323,7 @@ class FeatureEngineer:
         # Normalize continuous features
         if "rating_scaler" not in self.scalers:
             self.scalers["rating_scaler"] = StandardScaler()
-            features[:, :3] = self.scalers["rating_scaler"].fit_transform(
-                features[:, :3]
-            )
+            features[:, :3] = self.scalers["rating_scaler"].fit_transform(features[:, :3])
         else:
             features[:, :3] = self.scalers["rating_scaler"].transform(features[:, :3])
 
@@ -431,9 +408,7 @@ class FeatureEngineer:
                 genders.append(person.gender)
 
             # Check if person has additional info (considered "known")
-            if (hasattr(person, "birth_year") and person.birth_year) or (
-                hasattr(person, "gender") and person.gender
-            ):
+            if (hasattr(person, "birth_year") and person.birth_year) or (hasattr(person, "gender") and person.gender):
                 known_count += 1
 
         # Calculate aggregated features
@@ -538,9 +513,7 @@ class FeatureEngineer:
 
         if stratify_by_genre and len(movies) > 10:
             # Use primary genre for stratification
-            primary_genres = [
-                movie.genres[0].value if movie.genres else "Unknown" for movie in movies
-            ]
+            primary_genres = [movie.genres[0].value if movie.genres else "Unknown" for movie in movies]
 
             # Ensure we have enough samples per genre
             genre_counts = Counter(primary_genres)
@@ -560,9 +533,7 @@ class FeatureEngineer:
             )
         else:
             # Simple random split
-            train_idx, test_idx = train_test_split(
-                range(len(movies)), test_size=test_size, random_state=random_state
-            )
+            train_idx, test_idx = train_test_split(range(len(movies)), test_size=test_size, random_state=random_state)
 
         # Create splits
         train_movies = [movies[i] for i in train_idx]
@@ -593,9 +564,7 @@ class FeatureEngineer:
             },
         }
 
-        logger.info(
-            f"Split complete: {len(train_movies)} train, {len(test_movies)} test"
-        )
+        logger.info(f"Split complete: {len(train_movies)} train, {len(test_movies)} test")
 
         return split_data
 
@@ -663,9 +632,7 @@ class FeatureEngineer:
                     for movie in movies
                 ],
                 "shape": features.shape,
-                "export_timestamp": (
-                    pd.Timestamp.now().isoformat() if PANDAS_AVAILABLE else "unknown"
-                ),
+                "export_timestamp": (pd.Timestamp.now().isoformat() if PANDAS_AVAILABLE else "unknown"),
             }
 
             with open(json_path, "w") as f:
@@ -713,7 +680,7 @@ class FeatureEngineer:
 
 if __name__ == "__main__":
     # Example usage
-    from .schema import Movie, Ratings, Genre
+    from .schema import Genre, Movie, Ratings
 
     # Sample movies for testing
     sample_movies = [
@@ -766,7 +733,5 @@ if __name__ == "__main__":
 
     # Export features
     if features.size > 0:
-        exported = engineer.export_features(
-            features, sample_movies, feature_names, "data/processed", ["json", "numpy"]
-        )
+        exported = engineer.export_features(features, sample_movies, feature_names, "data/processed", ["json", "numpy"])
         print(f"Exported files: {exported}")

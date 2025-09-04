@@ -67,9 +67,7 @@ class PersonInfo(BaseModel):
         pattern=r"^(actor|director|writer|producer|composer|cinematographer|editor)$",
     )
     birth_year: Optional[int] = Field(None, ge=1800, le=2025)
-    gender: Optional[str] = Field(
-        None, pattern=r"^(male|female|non-binary|other|unknown)$"
-    )
+    gender: Optional[str] = Field(None, pattern=r"^(male|female|non-binary|other|unknown)$")
     ethnicity: Optional[str] = Field(None, max_length=100)
 
     @field_validator("birth_year")
@@ -82,13 +80,9 @@ class PersonInfo(BaseModel):
 class Ratings(BaseModel):
     """Movie ratings information."""
 
-    average: float = Field(
-        ..., ge=0.0, le=10.0, description="Average rating (0-10 scale)"
-    )
+    average: float = Field(..., ge=0.0, le=10.0, description="Average rating (0-10 scale)")
     count: int = Field(..., ge=0, description="Number of ratings")
-    distribution: Optional[Dict[str, int]] = Field(
-        None, description="Rating distribution by score"
-    )
+    distribution: Optional[Dict[str, int]] = Field(None, description="Rating distribution by score")
 
     @model_validator(mode="after")
     def validate_distribution(self):
@@ -123,35 +117,21 @@ class Metadata(BaseModel):
 class Movie(BaseModel):
     """Complete movie data model."""
 
-    movie_id: str = Field(
-        ..., min_length=1, max_length=50, description="Unique movie identifier"
-    )
+    movie_id: str = Field(..., min_length=1, max_length=50, description="Unique movie identifier")
     title: str = Field(..., min_length=1, max_length=500, description="Movie title")
-    synopsis: str = Field(
-        ..., min_length=50, max_length=5000, description="Movie synopsis/plot"
-    )
+    synopsis: str = Field(..., min_length=50, max_length=5000, description="Movie synopsis/plot")
     release_year: int = Field(..., ge=1895, le=2030, description="Release year")
-    runtime_mins: Optional[int] = Field(
-        None, ge=1, le=500, description="Runtime in minutes"
-    )
-    genres: List[Genre] = Field(
-        ..., min_length=1, max_length=10, description="Movie genres"
-    )
-    cast: Optional[List[PersonInfo]] = Field(
-        None, max_length=50, description="Cast information"
-    )
-    crew: Optional[List[PersonInfo]] = Field(
-        None, max_length=30, description="Crew information"
-    )
+    runtime_mins: Optional[int] = Field(None, ge=1, le=500, description="Runtime in minutes")
+    genres: List[Genre] = Field(..., min_length=1, max_length=10, description="Movie genres")
+    cast: Optional[List[PersonInfo]] = Field(None, max_length=50, description="Cast information")
+    crew: Optional[List[PersonInfo]] = Field(None, max_length=30, description="Crew information")
     ratings: Ratings = Field(..., description="Ratings information")
     metadata: Optional[Metadata] = Field(None, description="Additional metadata")
 
     # Data quality tracking
     data_source: str = Field("unknown", description="Original data source")
     last_updated: datetime = Field(default_factory=datetime.now)
-    quality_score: Optional[float] = Field(
-        None, ge=0.0, le=1.0, description="Data quality score"
-    )
+    quality_score: Optional[float] = Field(None, ge=0.0, le=1.0, description="Data quality score")
 
     @field_validator("synopsis")
     def validate_synopsis(cls, v):
@@ -204,14 +184,9 @@ class Movie(BaseModel):
             # Check budget vs revenue logic
             if self.metadata.budget and self.metadata.revenue:
                 # Revenue should typically be >= budget (allowing for losses)
-                if (
-                    self.metadata.revenue > 0
-                    and self.metadata.budget > self.metadata.revenue * 10
-                ):
+                if self.metadata.revenue > 0 and self.metadata.budget > self.metadata.revenue * 10:
                     # Flag if budget is more than 10x revenue (likely data error)
-                    raise ValueError(
-                        "Budget significantly exceeds revenue, possible data error"
-                    )
+                    raise ValueError("Budget significantly exceeds revenue, possible data error")
 
         return self
 
@@ -304,9 +279,7 @@ class QualityThresholds(BaseModel):
     @field_validator("valid_year_range")
     def validate_year_range(cls, v):
         if len(v) != 2 or v[0] >= v[1]:
-            raise ValueError(
-                "Year range must be [start_year, end_year] with start < end"
-            )
+            raise ValueError("Year range must be [start_year, end_year] with start < end")
         return v
 
 
