@@ -23,7 +23,6 @@ import requests
 import yaml
 from tqdm import tqdm
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -39,9 +38,14 @@ class DatasetDownloader:
     def __init__(self, config_path: str = "configs/data_config.yaml"):
         """Initialize downloader with configuration."""
         self.config = self._load_config(config_path)
-        self.cache_dir = Path(self.config["download"]["cache_dir"])
-        self.temp_dir = Path(self.config["download"]["temp_dir"])
-        self.metadata_file = Path(self.config["versioning"]["metadata_file"])
+        
+        # Set up directories with defaults
+        download_config = self.config.get("download", {})
+        versioning_config = self.config.get("versioning", {})
+        
+        self.cache_dir = Path(download_config.get("cache_dir", "data/cache"))
+        self.temp_dir = Path(download_config.get("temp_dir", "data/temp"))
+        self.metadata_file = Path(versioning_config.get("metadata_file", "data/metadata.json"))
 
         # Create directories
         self.cache_dir.mkdir(parents=True, exist_ok=True)
@@ -57,28 +61,45 @@ class DatasetDownloader:
             with open(config_path, "r") as f:
                 return yaml.safe_load(f)
         except FileNotFoundError:
-            raise DataAcquisitionError(f"Configuration file not found: {config_path}")
+            # Return default configuration if file not found
+            logger.warning(f"Configuration file not found: {config_path}, using defaults")
+            return {
+                "download": {
+                    "cache_dir": "data/cache",
+                    "temp_dir": "data/temp"
+                },
+                "versioning": {
+                    "metadata_file": "data/metadata.json"
+                },
+                "logging": {
+                    "level": "INFO",
+                    "file": "data/logs/acquisition.log",
+                    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+                }
+            }
         except yaml.YAMLError as e:
             raise DataAcquisitionError(f"Error parsing configuration: {e}")
 
     def _setup_logging(self) -> None:
         """Setup logging configuration."""
-        log_config = self.config["logging"]
+        log_config = self.config.get("logging", {
+            "level": "INFO",
+            "file": "data/logs/acquisition.log",
+            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        })
 
         # Create log directory if it doesn't exist
-        log_file = Path(log_config["file"])
+        log_file = Path(log_config.get("file", "data/logs/acquisition.log"))
         log_file.parent.mkdir(parents=True, exist_ok=True)
 
         # Configure logging
         logging.basicConfig(
-            level=getattr(logging, log_config["level"]),
-            format=log_config["format"],
+            level=getattr(logging, log_config.get("level", "INFO")),
+            format=log_config.get("format", "%(asctime)s - %(name)s - %(levelname)s - %(message)s"),
             handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
         )
 
-    def download_dataset(
-        self, source_name: Optional[str] = None, force_refresh: bool = False
-    ) -> Path:
+    def download_dataset(self, source_name: Optional[str] = None, force_refresh: bool = False) -> Path:
         """
         Download dataset from specified source with caching.
 
@@ -171,9 +192,7 @@ class DatasetDownloader:
 
         logger.info(f"Created minimal fallback dataset at {fallback_path}")
 
-    def _download_movielens(
-        self, source_config: Dict[str, Any], force_refresh: bool
-    ) -> Path:
+    def _download_movielens(self, source_config: Dict[str, Any], force_refresh: bool) -> Path:
         """Download MovieLens dataset."""
         url = source_config["url"]
         filename = source_config["filename"]
@@ -197,12 +216,8 @@ class DatasetDownloader:
             downloaded_file = self._download_with_progress(url, cached_file)
 
             # Verify checksum if provided
-            if expected_checksum and not self._verify_file_integrity(
-                downloaded_file, expected_checksum
-            ):
-                raise DataAcquisitionError(
-                    "Downloaded file failed checksum verification"
-                )
+            if expected_checksum and not self._verify_file_integrity(downloaded_file, expected_checksum):
+                raise DataAcquisitionError("Downloaded file failed checksum verification")
 
             # Update metadata
             self._update_metadata(source_config, downloaded_file, "downloaded")
@@ -213,16 +228,12 @@ class DatasetDownloader:
         except (URLError, HTTPError, requests.RequestException) as e:
             raise DataAcquisitionError(f"Network error downloading MovieLens data: {e}")
 
-    def _download_tmdb(
-        self, source_config: Dict[str, Any], force_refresh: bool
-    ) -> Path:
+    def _download_tmdb(self, source_config: Dict[str, Any], force_refresh: bool) -> Path:
         """Download data from TMDB API (placeholder implementation)."""
         # This would require implementing TMDB API calls
         # For now, fall back to local dataset
         logger.warning("TMDB API integration not yet implemented, using local fallback")
-        return self._handle_local_fallback(
-            self.config["data_sources"]["local_fallback"]
-        )
+        return self._handle_local_fallback(self.config["data_sources"]["local_fallback"])
 
     def _download_with_progress(self, url: str, target_path: Path) -> Path:
         """Download file with progress bar."""
@@ -239,9 +250,7 @@ class DatasetDownloader:
             total_size = int(response.headers.get("content-length", 0))
 
             with open(temp_path, "wb") as f:
-                with tqdm(
-                    total=total_size, unit="iB", unit_scale=True, desc="Downloading"
-                ) as pbar:
+                with tqdm(total=total_size, unit="iB", unit_scale=True, desc="Downloading") as pbar:
                     for chunk in response.iter_content(chunk_size=config["chunk_size"]):
                         if chunk:
                             f.write(chunk)
@@ -272,9 +281,7 @@ class DatasetDownloader:
             is_valid = actual_checksum == expected_checksum
 
             if not is_valid:
-                logger.error(
-                    f"Checksum mismatch - expected: {expected_checksum}, actual: {actual_checksum}"
-                )
+                logger.error(f"Checksum mismatch - expected: {expected_checksum}, actual: {actual_checksum}")
 
             return is_valid
 
@@ -282,9 +289,7 @@ class DatasetDownloader:
             logger.error(f"Error verifying file integrity: {e}")
             return False
 
-    def _update_metadata(
-        self, source_config: Dict[str, Any], file_path: Path, action: str
-    ) -> None:
+    def _update_metadata(self, source_config: Dict[str, Any], file_path: Path, action: str) -> None:
         """Update dataset metadata with download information."""
         metadata = self._load_metadata()
 
@@ -338,9 +343,7 @@ class DatasetDownloader:
 
         return info
 
-    def extract_dataset(
-        self, dataset_path: Path, extract_dir: Optional[Path] = None
-    ) -> Path:
+    def extract_dataset(self, dataset_path: Path, extract_dir: Optional[Path] = None) -> Path:
         """Extract dataset if it's a compressed file."""
         if not extract_dir:
             extract_dir = dataset_path.parent / "extracted"
@@ -378,9 +381,7 @@ def validate_license_compliance(source_config: Dict[str, Any]) -> List[str]:
     return requirements
 
 
-def generate_attribution_file(
-    metadata: Dict[str, Any], output_path: str = "DATASET_ATTRIBUTIONS.md"
-) -> None:
+def generate_attribution_file(metadata: Dict[str, Any], output_path: str = "DATASET_ATTRIBUTIONS.md") -> None:
     """Generate attribution file for dataset compliance."""
     with open(output_path, "w") as f:
         f.write("# Dataset Attributions\n\n")

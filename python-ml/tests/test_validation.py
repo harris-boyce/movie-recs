@@ -77,14 +77,10 @@ class TestDataValidator(unittest.TestCase):
 
     def test_dataset_validation_success(self):
         """Test successful dataset validation."""
-        validation_result, valid_movies = self.validator.validate_dataset(
-            self.sample_movies
-        )
+        validation_result, valid_movies = self.validator.validate_dataset(self.sample_movies)
 
         self.assertEqual(len(valid_movies), 3)
-        self.assertTrue(
-            validation_result.is_valid or validation_result.warning_count > 0
-        )
+        self.assertTrue(validation_result.is_valid or validation_result.warning_count > 0)
         self.assertEqual(validation_result.summary["total_movies"], 3)
         self.assertEqual(validation_result.summary["valid_movies"], 3)
 
@@ -104,9 +100,7 @@ class TestDataValidator(unittest.TestCase):
             }
         ]
 
-        validation_result, valid_movies = self.validator.validate_dataset(
-            invalid_movies
-        )
+        validation_result, valid_movies = self.validator.validate_dataset(invalid_movies)
 
         self.assertEqual(len(valid_movies), 3)  # Only valid movies
         self.assertFalse(validation_result.is_valid)
@@ -146,9 +140,7 @@ class TestDataValidator(unittest.TestCase):
 
     def test_bias_detection_genre_diversity(self):
         """Test genre diversity analysis."""
-        validation_result, valid_movies = self.validator.validate_dataset(
-            self.sample_movies
-        )
+        validation_result, valid_movies = self.validator.validate_dataset(self.sample_movies)
         bias_metrics = self.validator.detect_bias(valid_movies)
 
         self.assertIn("genre_diversity", bias_metrics.__dict__)
@@ -162,9 +154,7 @@ class TestDataValidator(unittest.TestCase):
 
     def test_bias_detection_temporal_analysis(self):
         """Test temporal bias detection."""
-        validation_result, valid_movies = self.validator.validate_dataset(
-            self.sample_movies
-        )
+        validation_result, valid_movies = self.validator.validate_dataset(self.sample_movies)
         bias_metrics = self.validator.detect_bias(valid_movies)
 
         self.assertIn("temporal_distribution", bias_metrics.__dict__)
@@ -177,9 +167,7 @@ class TestDataValidator(unittest.TestCase):
 
     def test_bias_detection_geographic_analysis(self):
         """Test geographic distribution analysis."""
-        validation_result, valid_movies = self.validator.validate_dataset(
-            self.sample_movies
-        )
+        validation_result, valid_movies = self.validator.validate_dataset(self.sample_movies)
         bias_metrics = self.validator.detect_bias(valid_movies)
 
         self.assertIn("geographic_distribution", bias_metrics.__dict__)
@@ -192,9 +180,7 @@ class TestDataValidator(unittest.TestCase):
 
     def test_bias_score_calculation(self):
         """Test overall bias score calculation."""
-        validation_result, valid_movies = self.validator.validate_dataset(
-            self.sample_movies
-        )
+        validation_result, valid_movies = self.validator.validate_dataset(self.sample_movies)
         bias_metrics = self.validator.detect_bias(valid_movies)
 
         self.assertIsInstance(bias_metrics.overall_bias_score, float)
@@ -203,9 +189,7 @@ class TestDataValidator(unittest.TestCase):
 
     def test_bias_recommendations_generation(self):
         """Test bias recommendation generation."""
-        validation_result, valid_movies = self.validator.validate_dataset(
-            self.sample_movies
-        )
+        validation_result, valid_movies = self.validator.validate_dataset(self.sample_movies)
         bias_metrics = self.validator.detect_bias(valid_movies)
 
         self.assertIsInstance(bias_metrics.recommendations, list)
@@ -222,16 +206,17 @@ class TestDataValidator(unittest.TestCase):
 
         result = ValidationResult(is_valid=True)
 
-        short_synopsis_movie = Movie(
+        # Create a movie that should trigger warnings
+        warning_movie = Movie(
             movie_id="test",
             title="Test Movie",
-            synopsis="Short synopsis.",  # Too short
-            release_year=1800,  # Outside range
+            synopsis="This is a valid length synopsis that meets the minimum requirements for testing purposes and validation.",
+            release_year=1899,  # Should trigger year warning (outside 1900-2025 range but valid for schema)
             genres=[Genre.DRAMA],
-            ratings=Ratings(average=8.0, count=0),  # Zero ratings
+            ratings=Ratings(average=8.0, count=0),  # Should trigger rating count warning (< min of 1)
         )
 
-        self.validator._validate_movie_quality(short_synopsis_movie, result)
+        self.validator._validate_movie_quality(warning_movie, result)
 
         self.assertGreater(result.warning_count, 0)
 
@@ -262,16 +247,12 @@ class TestDataValidator(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             output_path = Path(temp_dir) / "test_report.html"
 
-            validation_result, valid_movies = self.validator.validate_dataset(
-                self.sample_movies
-            )
+            validation_result, valid_movies = self.validator.validate_dataset(self.sample_movies)
             bias_metrics = self.validator.detect_bias(valid_movies)
 
             # Should not raise an exception
             try:
-                self.validator.generate_html_report(
-                    validation_result, bias_metrics, valid_movies, str(output_path)
-                )
+                self.validator.generate_html_report(validation_result, bias_metrics, valid_movies, str(output_path))
 
                 # Check if file was created
                 self.assertTrue(output_path.exists())
@@ -371,9 +352,7 @@ class TestDataValidatorIntegration(unittest.TestCase):
         validation_result, valid_movies = validator.validate_dataset(movies)
 
         self.assertEqual(len(valid_movies), 4)
-        self.assertTrue(
-            validation_result.is_valid or validation_result.warning_count >= 0
-        )
+        self.assertTrue(validation_result.is_valid or validation_result.warning_count >= 0)
 
         # Run bias detection
         bias_metrics = validator.detect_bias(valid_movies)

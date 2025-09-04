@@ -88,9 +88,7 @@ class TestPipelineIntegration(unittest.TestCase):
 
         # Run pipeline
         pipeline = DataPipeline(str(config_file))
-        results = pipeline.run_full_pipeline(
-            skip_download=True, export_formats=["json", "csv"]
-        )
+        results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json", "csv"])
 
         # Validate results
         self.assertEqual(results["status"], "success")
@@ -121,9 +119,7 @@ class TestPipelineIntegration(unittest.TestCase):
                 "min_movies": 1,  # Allow pipeline to run even with few valid movies
                 "max_movies": 10,
             },
-            "quality_thresholds": {
-                "completeness_min": 0.5  # Lower threshold to allow some processing
-            },
+            "quality_thresholds": {"completeness_min": 0.5},  # Lower threshold to allow some processing
             "logging": {"level": "ERROR"},  # Only show errors
         }
 
@@ -135,9 +131,7 @@ class TestPipelineIntegration(unittest.TestCase):
 
         # Run pipeline - should handle errors gracefully
         pipeline = DataPipeline(str(config_file))
-        results = pipeline.run_full_pipeline(
-            skip_download=True, export_formats=["json"]
-        )
+        results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json"])
 
         # Pipeline might fail or succeed with warnings
         self.assertIn(results["status"], ["success", "failed"])
@@ -146,9 +140,7 @@ class TestPipelineIntegration(unittest.TestCase):
             self.assertIn("error", results)
             print(f"⚠️  Pipeline appropriately failed: {results['error'][:100]}...")
         else:
-            print(
-                f"✅ Pipeline handled malformed data: {results['summary']['valid_movies']} valid movies"
-            )
+            print(f"✅ Pipeline handled malformed data: {results['summary']['valid_movies']} valid movies")
 
     def test_bias_detection_with_biased_dataset(self):
         """Test bias detection with intentionally biased data."""
@@ -216,9 +208,7 @@ class TestPipelineIntegration(unittest.TestCase):
         validation_result, valid_movies = validator.validate_dataset(large_dataset)
 
         engineer = FeatureEngineer()
-        features, feature_names = engineer.process_movies(
-            valid_movies, include_text=True
-        )
+        features, feature_names = engineer.process_movies(valid_movies, include_text=True)
 
         processing_time = time.time() - start_time
 
@@ -238,9 +228,7 @@ class TestPipelineIntegration(unittest.TestCase):
 
         # Quality assertions
         self.assertEqual(len(valid_movies), 50, "All synthetic movies should be valid")
-        self.assertGreater(
-            features.shape[1], 50, "Should generate substantial features"
-        )
+        self.assertGreater(features.shape[1], 50, "Should generate substantial features")
 
         print(f"⏱️  Processed {len(valid_movies)} movies in {processing_time:.2f}s")
         print(f"🚀 Rate: {movies_per_sec:.1f} movies/sec")
@@ -277,9 +265,7 @@ class TestPipelineIntegration(unittest.TestCase):
 
         if valid_movies:
             engineer = FeatureEngineer()
-            features, feature_names = engineer.process_movies(
-                valid_movies, include_text=True
-            )
+            features, feature_names = engineer.process_movies(valid_movies, include_text=True)
 
             current_memory = psutil.Process().memory_info().rss / 1024 / 1024
             peak_memory = max(peak_memory, current_memory)
@@ -316,16 +302,12 @@ class TestPipelineIntegration(unittest.TestCase):
             cycle_time = time.time() - start_time
 
             self.assertGreater(len(valid_movies), 0)
-            self.assertLess(
-                cycle_time, 2.0, f"Validation cycle {i} too slow: {cycle_time:.2f}s"
-            )
+            self.assertLess(cycle_time, 2.0, f"Validation cycle {i} too slow: {cycle_time:.2f}s")
 
         # Run multiple feature engineering cycles
         if len(sample_data) > 0:
             validator = DataValidator()
-            validation_result, valid_movies = validator.validate_dataset(
-                sample_data[:3]
-            )  # Smaller subset
+            validation_result, valid_movies = validator.validate_dataset(sample_data[:3])  # Smaller subset
 
             engineer = FeatureEngineer()
 
@@ -337,9 +319,7 @@ class TestPipelineIntegration(unittest.TestCase):
                 cycle_time = time.time() - start_time
 
                 self.assertGreater(features.shape[1], 0)
-                self.assertLess(
-                    cycle_time, 3.0, f"Feature cycle {i} too slow: {cycle_time:.2f}s"
-                )
+                self.assertLess(cycle_time, 3.0, f"Feature cycle {i} too slow: {cycle_time:.2f}s")
 
         print("✅ Concurrent execution simulation completed")
 
@@ -356,9 +336,7 @@ class TestPipelineIntegration(unittest.TestCase):
         validation_result, valid_movies = validator.validate_dataset(sample_data)
 
         engineer = FeatureEngineer()
-        features, feature_names = engineer.process_movies(
-            valid_movies[:3], include_text=False
-        )
+        features, feature_names = engineer.process_movies(valid_movies[:3], include_text=False)
 
         # Export in multiple formats
         export_dir = self.temp_dir / "exports"
@@ -441,14 +419,10 @@ class TestPerformanceBenchmarks(unittest.TestCase):
                 "valid_count": len(valid_movies),
             }
 
-            print(
-                f"📊 {size} movies: {validation_time:.2f}s ({movies_per_sec:.1f} movies/sec)"
-            )
+            print(f"📊 {size} movies: {validation_time:.2f}s ({movies_per_sec:.1f} movies/sec)")
 
             # Performance assertions
-            self.assertLess(
-                validation_time, size * 0.1, f"Validation too slow for {size} movies"
-            )
+            self.assertLess(validation_time, size * 0.1, f"Validation too slow for {size} movies")
 
     def test_feature_engineering_benchmark(self):
         """Benchmark feature engineering performance."""
@@ -477,22 +451,16 @@ class TestPerformanceBenchmarks(unittest.TestCase):
 
         # Benchmark with text features
         start_time = time.time()
-        features_with_text, names_with_text = engineer.process_movies(
-            valid_movies, include_text=True
-        )
+        features_with_text, names_with_text = engineer.process_movies(valid_movies, include_text=True)
         text_time = time.time() - start_time
 
         # Benchmark without text features
         start_time = time.time()
-        features_no_text, names_no_text = engineer.process_movies(
-            valid_movies, include_text=False
-        )
+        features_no_text, names_no_text = engineer.process_movies(valid_movies, include_text=False)
         no_text_time = time.time() - start_time
 
         print(f"🎯 With text: {text_time:.2f}s, {features_with_text.shape[1]} features")
-        print(
-            f"🎯 Without text: {no_text_time:.2f}s, {features_no_text.shape[1]} features"
-        )
+        print(f"🎯 Without text: {no_text_time:.2f}s, {features_no_text.shape[1]} features")
 
         # Performance assertions
         self.assertLess(text_time, 10.0, "Text feature engineering too slow")

@@ -231,9 +231,7 @@ class TestDataPipeline(unittest.TestCase):
     @patch("src.data_prep.DatasetDownloader")
     @patch("src.data_prep.DataValidator")
     @patch("src.data_prep.FeatureEngineer")
-    def test_full_pipeline_success(
-        self, mock_feature_engineer, mock_validator, mock_downloader
-    ):
+    def test_full_pipeline_success(self, mock_feature_engineer, mock_validator, mock_downloader):
         """Test successful full pipeline execution."""
         # Setup mocks
         mock_downloader_instance = Mock()
@@ -280,9 +278,7 @@ class TestDataPipeline(unittest.TestCase):
         split_data["test"]["features"].shape = (1, 2)
 
         mock_feature_engineer_instance.create_train_test_split.return_value = split_data
-        mock_feature_engineer_instance.export_features.return_value = {
-            "json": "test.json"
-        }
+        mock_feature_engineer_instance.export_features.return_value = {"json": "test.json"}
 
         # Create pipeline with real config but mocked components
         pipeline = DataPipeline(str(self.config_file))
@@ -319,9 +315,7 @@ class TestDataPipeline(unittest.TestCase):
         pipeline = DataPipeline(str(self.config_file))
 
         # Test will use existing test data
-        results = pipeline.run_full_pipeline(
-            skip_download=True, export_formats=["json"]
-        )
+        results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json"])
 
         self.assertEqual(results["status"], "success")
         self.assertGreater(results["summary"]["valid_movies"], 0)
@@ -498,9 +492,7 @@ class TestPipelineIntegration(unittest.TestCase):
 
             # Run complete pipeline
             pipeline = DataPipeline(str(config_file))
-            results = pipeline.run_full_pipeline(
-                skip_download=True, export_formats=["json"]  # Use existing data
-            )
+            results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json"])  # Use existing data
 
             # Verify results
             self.assertEqual(results["status"], "success")
@@ -514,9 +506,7 @@ class TestPipelineIntegration(unittest.TestCase):
             # Check feature engineering results
             feature_info = results["feature_info"]
             self.assertGreater(feature_info["feature_count"], 0)
-            self.assertGreater(
-                feature_info["train_features"][0], 0
-            )  # Train samples > 0
+            self.assertGreater(feature_info["train_features"][0], 0)  # Train samples > 0
             self.assertGreater(feature_info["test_features"][0], 0)  # Test samples > 0
 
 

@@ -58,9 +58,7 @@ class TestRequirementsValidation(unittest.TestCase):
         validation_result, valid_movies = validator.validate_dataset(sample_data)
 
         # Requirement: Schema validation
-        self.assertTrue(
-            validation_result.is_valid or validation_result.warning_count >= 0
-        )
+        self.assertTrue(validation_result.is_valid or validation_result.warning_count >= 0)
         self.assertGreater(len(valid_movies), 0)
 
         # Requirement: Required fields validation (title, synopsis, release_year)
@@ -111,13 +109,9 @@ class TestRequirementsValidation(unittest.TestCase):
             self.assertIsInstance(bias_metrics.recommendations, list)
             self.assertGreater(len(bias_metrics.recommendations), 0)
 
-            print(
-                f"   ✓ Genre diversity analysis: {bias_metrics.genre_diversity.get('unique_genres', 'N/A')} genres"
-            )
+            print(f"   ✓ Genre diversity analysis: {bias_metrics.genre_diversity.get('unique_genres', 'N/A')} genres")
             print(f"   ✓ Overall bias score: {bias_metrics.overall_bias_score:.3f}")
-            print(
-                f"   ✓ Recommendations generated: {len(bias_metrics.recommendations)}"
-            )
+            print(f"   ✓ Recommendations generated: {len(bias_metrics.recommendations)}")
 
     def test_functional_requirements_feature_engineering(self):
         """Test: Feature engineering and processing requirements."""
@@ -135,27 +129,17 @@ class TestRequirementsValidation(unittest.TestCase):
 
         if valid_movies:
             # Requirement: Text preprocessing (synopsis cleaning, normalization)
-            features, feature_names = engineer.process_movies(
-                valid_movies, include_text=True
-            )
+            features, feature_names = engineer.process_movies(valid_movies, include_text=True)
 
             self.assertGreater(features.shape[1], 0)
             self.assertEqual(len(feature_names), features.shape[1])
 
             # Check for specific feature types mentioned in requirements
             text_features = [name for name in feature_names if name.startswith("text_")]
-            genre_features = [
-                name for name in feature_names if name.startswith("genre_")
-            ]
-            decade_features = [
-                name for name in feature_names if name.startswith("decade_")
-            ]
-            runtime_features = [
-                name for name in feature_names if name.startswith("runtime_")
-            ]
-            rating_features = [
-                name for name in feature_names if name.startswith("rating_")
-            ]
+            genre_features = [name for name in feature_names if name.startswith("genre_")]
+            decade_features = [name for name in feature_names if name.startswith("decade_")]
+            runtime_features = [name for name in feature_names if name.startswith("runtime_")]
+            rating_features = [name for name in feature_names if name.startswith("rating_")]
 
             # Requirement: Genre one-hot encoding
             self.assertGreater(len(genre_features), 0, "Genre features missing")
@@ -209,9 +193,7 @@ class TestRequirementsValidation(unittest.TestCase):
 
         if valid_movies:
             engineer = FeatureEngineer()
-            features, feature_names = engineer.process_movies(
-                valid_movies, include_text=False
-            )
+            features, feature_names = engineer.process_movies(valid_movies, include_text=False)
 
             # Requirement: Export in multiple formats (CSV, JSON, Parquet, NumPy)
             export_dir = self.temp_dir / "export_test"
@@ -261,28 +243,18 @@ class TestRequirementsValidation(unittest.TestCase):
         validation_time = time.time() - start_time
 
         # Should process 100 movies quickly
-        self.assertLess(
-            validation_time, 5.0, f"Validation too slow: {validation_time:.2f}s"
-        )
+        self.assertLess(validation_time, 5.0, f"Validation too slow: {validation_time:.2f}s")
 
         if valid_movies:
             start_time = time.time()
             engineer = FeatureEngineer()
-            features, feature_names = engineer.process_movies(
-                valid_movies, include_text=False
-            )
+            features, feature_names = engineer.process_movies(valid_movies, include_text=False)
             feature_time = time.time() - start_time
 
-            self.assertLess(
-                feature_time, 10.0, f"Feature engineering too slow: {feature_time:.2f}s"
-            )
+            self.assertLess(feature_time, 10.0, f"Feature engineering too slow: {feature_time:.2f}s")
 
-            print(
-                f"   ✓ Validation performance: {len(perf_data)/validation_time:.1f} movies/sec"
-            )
-            print(
-                f"   ✓ Feature engineering: {len(valid_movies)/feature_time:.1f} movies/sec"
-            )
+            print(f"   ✓ Validation performance: {len(perf_data)/validation_time:.1f} movies/sec")
+            print(f"   ✓ Feature engineering: {len(valid_movies)/feature_time:.1f} movies/sec")
             print(f"   ✓ Total features generated: {features.shape[1]}")
 
     def test_technical_specifications_directory_structure(self):
@@ -305,9 +277,7 @@ class TestRequirementsValidation(unittest.TestCase):
             full_path = base_dir / dir_path
             if not full_path.exists():
                 full_path.mkdir(parents=True, exist_ok=True)
-            self.assertTrue(
-                full_path.exists(), f"Required directory missing: {dir_path}"
-            )
+            self.assertTrue(full_path.exists(), f"Required directory missing: {dir_path}")
 
         print("   ✓ All required directories present or created")
 
@@ -328,9 +298,7 @@ class TestRequirementsValidation(unittest.TestCase):
 
         for test_file in required_test_files:
             test_path = test_dir / test_file
-            self.assertTrue(
-                test_path.exists(), f"Required test file missing: {test_file}"
-            )
+            self.assertTrue(test_path.exists(), f"Required test file missing: {test_file}")
 
         # Verify test fixtures exist
         fixtures_dir = test_dir / "fixtures"
@@ -344,9 +312,7 @@ class TestRequirementsValidation(unittest.TestCase):
 
         for fixture in required_fixtures:
             fixture_path = fixtures_dir / fixture
-            self.assertTrue(
-                fixture_path.exists(), f"Required fixture missing: {fixture}"
-            )
+            self.assertTrue(fixture_path.exists(), f"Required fixture missing: {fixture}")
 
         print("   ✓ All required test files present")
         print("   ✓ Test fixtures available")
@@ -359,11 +325,7 @@ class TestRequirementsValidation(unittest.TestCase):
         config = {
             "data_sources": {
                 "primary": "local_fallback",
-                "local_fallback": {
-                    "path": str(
-                        Path(__file__).parent / "fixtures" / "sample_movies.json"
-                    )
-                },
+                "local_fallback": {"path": str(Path(__file__).parent / "fixtures" / "sample_movies.json")},
             },
             "processing": {"min_movies": 3, "max_movies": 10},
             "quality_thresholds": {"completeness_min": 0.8},
@@ -378,9 +340,7 @@ class TestRequirementsValidation(unittest.TestCase):
 
         # Requirement: Complete pipeline execution
         pipeline = DataPipeline(str(config_file))
-        results = pipeline.run_full_pipeline(
-            skip_download=True, export_formats=["json"]
-        )
+        results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json"])
 
         # Verify deliverable requirements
         self.assertEqual(results["status"], "success")
@@ -410,9 +370,7 @@ class TestRequirementsValidation(unittest.TestCase):
         validator = DataValidator()
         validation_result, valid_movies = validator.validate_dataset(sample_data)
 
-        self.assertGreater(
-            len(valid_movies), 0, "Pipeline should process movies successfully"
-        )
+        self.assertGreater(len(valid_movies), 0, "Pipeline should process movies successfully")
 
         # Success Criteria: All data quality checks pass
         # (Allow warnings but check that validation doesn't completely fail)
@@ -443,15 +401,11 @@ class TestRequirementsValidation(unittest.TestCase):
         engineer2 = FeatureEngineer()
         features2, names2 = engineer2.process_movies(valid_movies, include_text=False)
 
-        self.assertEqual(
-            features1.shape, features2.shape, "Pipeline should be reproducible"
-        )
+        self.assertEqual(features1.shape, features2.shape, "Pipeline should be reproducible")
         self.assertEqual(names1, names2, "Feature names should be consistent")
 
         print(f"   ✓ Dataset processing: {len(valid_movies)} movies")
-        print(
-            f"   ✓ Data quality: {validation_result.error_count} errors, {validation_result.warning_count} warnings"
-        )
+        print(f"   ✓ Data quality: {validation_result.error_count} errors, {validation_result.warning_count} warnings")
         print(f"   ✓ Bias analysis: {bias_metrics.overall_bias_score:.3f} bias score")
         print(f"   ✓ Schema validation: All movies conform to schema")
         print(f"   ✓ Reproducibility: Consistent results across runs")

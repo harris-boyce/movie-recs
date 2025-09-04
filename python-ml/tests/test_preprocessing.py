@@ -31,6 +31,7 @@ class TestFeatureEngineer(unittest.TestCase):
                 "min_df": 1,
                 "max_df": 0.95,
                 "ngram_range": (1, 2),
+                "remove_stopwords": True,
             },
             "feature_engineering": {
                 "use_genre_encoding": True,
@@ -54,9 +55,7 @@ class TestFeatureEngineer(unittest.TestCase):
                 genres=[Genre.DRAMA],
                 ratings=Ratings(average=9.3, count=2500000),
                 cast=[
-                    PersonInfo(
-                        name="Tim Robbins", role="actor", birth_year=1958, gender="male"
-                    ),
+                    PersonInfo(name="Tim Robbins", role="actor", birth_year=1958, gender="male"),
                     PersonInfo(
                         name="Morgan Freeman",
                         role="actor",
@@ -171,9 +170,7 @@ class TestFeatureEngineer(unittest.TestCase):
         decade_features = self.engineer.create_decade_features(self.sample_movies)
 
         self.assertEqual(decade_features.shape[0], len(self.sample_movies))
-        self.assertGreater(
-            decade_features.shape[1], 4
-        )  # At least 4 categories + normalized
+        self.assertGreater(decade_features.shape[1], 4)  # At least 4 categories + normalized
 
         # Movies 1 and 2 are from 1994, Movie 3 is from 2001
         # They should have different decade category encodings
@@ -184,9 +181,7 @@ class TestFeatureEngineer(unittest.TestCase):
         runtime_features = self.engineer.create_runtime_features(self.sample_movies)
 
         self.assertEqual(runtime_features.shape[0], len(self.sample_movies))
-        self.assertEqual(
-            runtime_features.shape[1], 6
-        )  # 4 bins + normalized + has_runtime
+        self.assertEqual(runtime_features.shape[1], 6)  # 4 bins + normalized + has_runtime
 
         # All test movies have runtime, so has_runtime should be 1
         self.assertTrue(np.all(runtime_features[:, -1] == 1))
@@ -216,9 +211,7 @@ class TestFeatureEngineer(unittest.TestCase):
         rating_features = self.engineer.create_rating_features(self.sample_movies)
 
         self.assertEqual(rating_features.shape[0], len(self.sample_movies))
-        self.assertEqual(
-            rating_features.shape[1], 6
-        )  # average, count_log, interaction + 3 categories
+        self.assertEqual(rating_features.shape[1], 6)  # average, count_log, interaction + 3 categories
 
         # Check that high-rated movies (>8.0) have rating_high = 1
         for i, movie in enumerate(self.sample_movies):
@@ -230,9 +223,7 @@ class TestFeatureEngineer(unittest.TestCase):
         cast_features = self.engineer.create_cast_crew_features(self.sample_movies)
 
         self.assertEqual(cast_features.shape[0], len(self.sample_movies))
-        self.assertEqual(
-            cast_features.shape[1], 8
-        )  # cast_size, crew_size + 6 aggregated features
+        self.assertEqual(cast_features.shape[1], 8)  # cast_size, crew_size + 6 aggregated features
 
         # Movies 1 and 2 have cast/crew, Movie 3 doesn't
         # Cast sizes should be different
@@ -240,9 +231,7 @@ class TestFeatureEngineer(unittest.TestCase):
 
     def test_process_movies_full_pipeline(self):
         """Test complete movie processing pipeline."""
-        features, feature_names = self.engineer.process_movies(
-            self.sample_movies, fit=True, include_text=True
-        )
+        features, feature_names = self.engineer.process_movies(self.sample_movies, fit=True, include_text=True)
 
         self.assertEqual(features.shape[0], len(self.sample_movies))
         self.assertGreater(features.shape[1], 0)
@@ -257,9 +246,7 @@ class TestFeatureEngineer(unittest.TestCase):
         )
 
         self.assertEqual(features_no_text.shape[0], len(self.sample_movies))
-        self.assertLess(
-            features_no_text.shape[1], features.shape[1]
-        )  # Should be smaller
+        self.assertLess(features_no_text.shape[1], features.shape[1])  # Should be smaller
 
     def test_train_test_split(self):
         """Test train/test split creation."""
@@ -338,9 +325,7 @@ class TestFeatureEngineer(unittest.TestCase):
         }
 
         minimal_engineer = FeatureEngineer(minimal_config)
-        features, feature_names = minimal_engineer.process_movies(
-            self.sample_movies, include_text=False
-        )
+        features, feature_names = minimal_engineer.process_movies(self.sample_movies, include_text=False)
 
         # Should only have genre features
         self.assertGreater(features.shape[1], 0)
@@ -423,17 +408,13 @@ class TestFeatureUtils(unittest.TestCase):
         targets = (targets > np.median(targets)).astype(int)  # Binary classification
 
         # Test k-best selection
-        selected_features, selected_indices, selector = FeatureSelector.select_k_best(
-            features, targets, k=5
-        )
+        selected_features, selected_indices, selector = FeatureSelector.select_k_best(features, targets, k=5)
 
         self.assertEqual(selected_features.shape[1], 5)
         self.assertEqual(len(selected_indices), 5)
 
         # Test variance-based selection
-        var_features, var_indices = FeatureSelector.select_by_variance(
-            features, threshold=0.5
-        )
+        var_features, var_indices = FeatureSelector.select_by_variance(features, threshold=0.5)
 
         self.assertLessEqual(var_features.shape[1], features.shape[1])
         self.assertEqual(len(var_indices), var_features.shape[1])
@@ -489,7 +470,13 @@ class TestFeatureEngineerIntegration(unittest.TestCase):
                 "use_rating_features": True,
                 "use_cast_features": False,  # No cast data
             },
-            "text_processing": {"max_features": 50, "min_df": 1},  # Smaller for test
+            "text_processing": {
+                "max_features": 50,
+                "min_df": 1,
+                "max_df": 0.95,
+                "ngram_range": (1, 2),
+                "remove_stopwords": True,
+            },  # Smaller for test
         }
 
         engineer = FeatureEngineer(config)
@@ -502,18 +489,14 @@ class TestFeatureEngineerIntegration(unittest.TestCase):
         self.assertEqual(len(feature_names), features.shape[1])
 
         # Create train/test split
-        split_data = engineer.create_train_test_split(
-            movies, test_size=0.33, stratify_by_genre=False
-        )
+        split_data = engineer.create_train_test_split(movies, test_size=0.33, stratify_by_genre=False)
 
         self.assertGreater(len(split_data["train"]["movies"]), 0)
         self.assertGreater(len(split_data["test"]["movies"]), 0)
 
         # Export features
         with tempfile.TemporaryDirectory() as temp_dir:
-            exported = engineer.export_features(
-                features, movies, feature_names, temp_dir, ["json"]
-            )
+            exported = engineer.export_features(features, movies, feature_names, temp_dir, ["json"])
 
             self.assertIn("json", exported)
             self.assertTrue(Path(exported["json"]).exists())

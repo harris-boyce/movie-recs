@@ -60,9 +60,7 @@ class BiasMetrics(BaseModel):
     """Container for bias detection metrics."""
 
     genre_diversity: Dict[str, float] = Field(default_factory=dict)
-    demographic_representation: Dict[str, Dict[str, float]] = Field(
-        default_factory=dict
-    )
+    demographic_representation: Dict[str, Dict[str, float]] = Field(default_factory=dict)
     geographic_distribution: Dict[str, float] = Field(default_factory=dict)
     temporal_distribution: Dict[str, float] = Field(default_factory=dict)
     rating_bias_analysis: Dict[str, Any] = Field(default_factory=dict)
@@ -82,9 +80,7 @@ class DataValidator:
         # Setup matplotlib for headless operation
         plt.switch_backend("Agg")
 
-    def validate_dataset(
-        self, movies: List[Dict[str, Any]]
-    ) -> Tuple[ValidationResult, List[Movie]]:
+    def validate_dataset(self, movies: List[Dict[str, Any]]) -> Tuple[ValidationResult, List[Movie]]:
         """
         Validate entire dataset and return results with valid movies.
 
@@ -129,14 +125,10 @@ class DataValidator:
 
         # Calculate field completeness
         if valid_movies:
-            result.summary["field_completeness"] = self._calculate_field_completeness(
-                valid_movies
-            )
+            result.summary["field_completeness"] = self._calculate_field_completeness(valid_movies)
 
         # Overall validation status
-        completeness_rate = (
-            result.summary["valid_movies"] / result.summary["total_movies"]
-        )
+        completeness_rate = result.summary["valid_movies"] / result.summary["total_movies"] if result.summary["total_movies"] > 0 else 0
         if completeness_rate < self.thresholds.completeness_min:
             result.add_error(
                 "dataset",
@@ -175,11 +167,7 @@ class DataValidator:
             )
 
         # Check year range
-        if not (
-            self.thresholds.valid_year_range[0]
-            <= movie.release_year
-            <= self.thresholds.valid_year_range[1]
-        ):
+        if not (self.thresholds.valid_year_range[0] <= movie.release_year <= self.thresholds.valid_year_range[1]):
             result.add_warning(
                 movie.movie_id,
                 "release_year",
@@ -274,15 +262,11 @@ class DataValidator:
 
         # Demographic representation analysis
         if self.bias_config.get("enable_demographic_analysis", True):
-            metrics.demographic_representation = (
-                self._analyze_demographic_representation(movies)
-            )
+            metrics.demographic_representation = self._analyze_demographic_representation(movies)
 
         # Geographic distribution analysis
         if self.bias_config.get("enable_geographic_analysis", True):
-            metrics.geographic_distribution = self._analyze_geographic_distribution(
-                movies
-            )
+            metrics.geographic_distribution = self._analyze_geographic_distribution(movies)
 
         # Temporal distribution analysis
         if self.bias_config.get("enable_temporal_analysis", True):
@@ -297,9 +281,7 @@ class DataValidator:
         # Generate recommendations
         metrics.recommendations = self._generate_bias_recommendations(metrics)
 
-        logger.info(
-            f"Bias analysis complete. Overall bias score: {metrics.overall_bias_score:.3f}"
-        )
+        logger.info(f"Bias analysis complete. Overall bias score: {metrics.overall_bias_score:.3f}")
 
         return metrics
 
@@ -317,11 +299,7 @@ class DataValidator:
                 "rating_count": movie.ratings.count,
                 "genre_count": len(movie.genres),
                 "primary_genre": movie.genres[0].value if movie.genres else None,
-                "language": (
-                    movie.metadata.language.value
-                    if movie.metadata
-                    else Language.EN.value
-                ),
+                "language": (movie.metadata.language.value if movie.metadata else Language.EN.value),
                 "country": movie.metadata.country if movie.metadata else "US",
                 "budget": movie.metadata.budget if movie.metadata else None,
                 "revenue": movie.metadata.revenue if movie.metadata else None,
@@ -332,17 +310,13 @@ class DataValidator:
             # Add genre flags
             all_genres = set(genre.value for genre in Genre)
             for genre in all_genres:
-                row[f'genre_{genre.lower().replace(" ", "_")}'] = genre in [
-                    g.value for g in movie.genres
-                ]
+                row[f'genre_{genre.lower().replace(" ", "_")}'] = genre in [g.value for g in movie.genres]
 
             data.append(row)
 
         return pd.DataFrame(data)
 
-    def _analyze_genre_diversity(
-        self, df: pd.DataFrame, movies: List[Movie]
-    ) -> Dict[str, float]:
+    def _analyze_genre_diversity(self, df: pd.DataFrame, movies: List[Movie]) -> Dict[str, float]:
         """Analyze genre representation and diversity."""
         genre_analysis = {}
 
@@ -355,9 +329,7 @@ class DataValidator:
                 genre_counts[genre.value] += 1
 
         # Calculate genre representation percentages
-        genre_percentages = {
-            genre: count / total_movies for genre, count in genre_counts.items()
-        }
+        genre_percentages = {genre: count / total_movies for genre, count in genre_counts.items()}
 
         # Shannon diversity index for genres
         if genre_counts:
@@ -373,18 +345,12 @@ class DataValidator:
         genre_analysis["shannon_diversity"] = shannon_diversity
         genre_analysis["unique_genres"] = len(genre_counts)
         genre_analysis["total_genre_instances"] = sum(genre_counts.values())
-        genre_analysis["average_genres_per_movie"] = (
-            sum(genre_counts.values()) / total_movies
-        )
+        genre_analysis["average_genres_per_movie"] = sum(genre_counts.values()) / total_movies
         genre_analysis["genre_distribution"] = genre_percentages
 
         # Identify under-represented genres
         min_representation = 0.01  # 1% threshold
-        underrepresented = [
-            genre
-            for genre, pct in genre_percentages.items()
-            if pct < min_representation
-        ]
+        underrepresented = [genre for genre, pct in genre_percentages.items() if pct < min_representation]
         genre_analysis["underrepresented_genres"] = underrepresented
 
         # Genre concentration (Gini coefficient approximation)
@@ -392,21 +358,16 @@ class DataValidator:
         n = len(sorted_counts)
         if n > 1:
             cumsum = np.cumsum(sorted_counts)
-            gini = (
-                n
-                + 1
-                - 2
-                * sum((n + 1 - i) * count for i, count in enumerate(sorted_counts, 1))
-            ) / (n * sum(sorted_counts))
+            gini = (n + 1 - 2 * sum((n + 1 - i) * count for i, count in enumerate(sorted_counts, 1))) / (
+                n * sum(sorted_counts)
+            )
         else:
             gini = 0.0
         genre_analysis["concentration_gini"] = gini
 
         return genre_analysis
 
-    def _analyze_demographic_representation(
-        self, movies: List[Movie]
-    ) -> Dict[str, Dict[str, float]]:
+    def _analyze_demographic_representation(self, movies: List[Movie]) -> Dict[str, Dict[str, float]]:
         """Analyze demographic representation in cast and crew."""
         demo_analysis = {"cast": defaultdict(list), "crew": defaultdict(list)}
 
@@ -419,9 +380,7 @@ class DataValidator:
                 for person in movie.cast:
                     total_cast_members += 1
                     demo_analysis["cast"]["gender"].append(person.gender or "unknown")
-                    demo_analysis["cast"]["ethnicity"].append(
-                        person.ethnicity or "unknown"
-                    )
+                    demo_analysis["cast"]["ethnicity"].append(person.ethnicity or "unknown")
 
                     # Age analysis (approximate from birth year)
                     if person.birth_year:
@@ -433,9 +392,7 @@ class DataValidator:
                 for person in movie.crew:
                     total_crew_members += 1
                     demo_analysis["crew"]["gender"].append(person.gender or "unknown")
-                    demo_analysis["crew"]["ethnicity"].append(
-                        person.ethnicity or "unknown"
-                    )
+                    demo_analysis["crew"]["ethnicity"].append(person.ethnicity or "unknown")
                     demo_analysis["crew"]["role"].append(person.role)
 
                     if person.birth_year:
@@ -464,10 +421,7 @@ class DataValidator:
                     if values:
                         counts = Counter(values)
                         total = len(values)
-                        result[group][demographic] = {
-                            category: count / total
-                            for category, count in counts.items()
-                        }
+                        result[group][demographic] = {category: count / total for category, count in counts.items()}
 
         return result
 
@@ -497,8 +451,7 @@ class DataValidator:
 
         language_counts = Counter(languages)
         geo_analysis["language_distribution"] = {
-            language: count / total_movies
-            for language, count in language_counts.items()
+            language: count / total_movies for language, count in language_counts.items()
         }
 
         # Diversity metrics
@@ -542,8 +495,7 @@ class DataValidator:
         total_movies = len(df)
 
         temporal_analysis["decade_distribution"] = {
-            f"{int(decade)}s": count / total_movies
-            for decade, count in decade_counts.items()
+            f"{int(decade)}s": count / total_movies for decade, count in decade_counts.items()
         }
 
         # Identify temporal bias (over-representation of recent movies)
@@ -559,9 +511,7 @@ class DataValidator:
 
         return temporal_analysis
 
-    def _analyze_rating_bias(
-        self, df: pd.DataFrame, movies: List[Movie]
-    ) -> Dict[str, Any]:
+    def _analyze_rating_bias(self, df: pd.DataFrame, movies: List[Movie]) -> Dict[str, Any]:
         """Analyze potential bias in ratings."""
         rating_analysis = {}
 
@@ -603,9 +553,7 @@ class DataValidator:
         # Rating bias by time period
         time_rating_analysis = {}
         for decade in [1970, 1980, 1990, 2000, 2010, 2020]:
-            decade_movies = df[
-                (df["release_year"] >= decade) & (df["release_year"] < decade + 10)
-            ]
+            decade_movies = df[(df["release_year"] >= decade) & (df["release_year"] < decade + 10)]
             if len(decade_movies) >= 5:
                 time_rating_analysis[f"{decade}s"] = {
                     "mean_rating": float(decade_movies["rating_average"].mean()),
@@ -626,22 +574,12 @@ class DataValidator:
 
         # Geographic concentration bias
         if metrics.geographic_distribution.get("dominant_country_percentage"):
-            country_bias = min(
-                metrics.geographic_distribution["dominant_country_percentage"], 1.0
-            )
+            country_bias = min(metrics.geographic_distribution["dominant_country_percentage"], 1.0)
             bias_components.append(country_bias)
 
         # Temporal bias (modern bias)
-        if metrics.temporal_distribution.get("modern_bias", {}).get(
-            "recent_movies_pct"
-        ):
-            temporal_bias = (
-                abs(
-                    metrics.temporal_distribution["modern_bias"]["recent_movies_pct"]
-                    - 0.5
-                )
-                * 2
-            )
+        if metrics.temporal_distribution.get("modern_bias", {}).get("recent_movies_pct"):
+            temporal_bias = abs(metrics.temporal_distribution["modern_bias"]["recent_movies_pct"] - 0.5) * 2
             bias_components.append(temporal_bias)
 
         # Demographic bias (simplified - check gender balance)
@@ -657,7 +595,7 @@ class DataValidator:
         else:
             overall_bias = 0.0
 
-        return min(overall_bias, 1.0)  # Cap at 1.0
+        return min(max(overall_bias, 0.0), 1.0)  # Ensure between 0.0 and 1.0
 
     def _generate_bias_recommendations(self, metrics: BiasMetrics) -> List[str]:
         """Generate recommendations to reduce bias."""
@@ -665,9 +603,7 @@ class DataValidator:
 
         # Genre diversity recommendations
         if metrics.genre_diversity.get("concentration_gini", 0) > 0.7:
-            recommendations.append(
-                "Consider including more diverse genres to reduce concentration bias"
-            )
+            recommendations.append("Consider including more diverse genres to reduce concentration bias")
 
         underrepresented = metrics.genre_diversity.get("underrepresented_genres", [])
         if underrepresented:
@@ -676,37 +612,25 @@ class DataValidator:
             )
 
         # Geographic recommendations
-        dominant_country_pct = metrics.geographic_distribution.get(
-            "dominant_country_percentage", 0
-        )
+        dominant_country_pct = metrics.geographic_distribution.get("dominant_country_percentage", 0)
         if dominant_country_pct > 0.8:
-            recommendations.append(
-                "Consider including more international films to reduce geographic bias"
-            )
+            recommendations.append("Consider including more international films to reduce geographic bias")
 
         # Temporal recommendations
         modern_bias = metrics.temporal_distribution.get("modern_bias", {})
         if modern_bias.get("is_biased_toward_recent", False):
-            recommendations.append(
-                "Include more classic/historical films to balance temporal distribution"
-            )
+            recommendations.append("Include more classic/historical films to balance temporal distribution")
 
         # Demographic recommendations
-        cast_gender = metrics.demographic_representation.get("cast", {}).get(
-            "gender", {}
-        )
+        cast_gender = metrics.demographic_representation.get("cast", {}).get("gender", {})
         if "male" in cast_gender and "female" in cast_gender:
             male_pct = cast_gender["male"]
             female_pct = cast_gender["female"]
             if abs(male_pct - female_pct) > 0.3:
-                recommendations.append(
-                    "Consider improving gender balance in cast representation"
-                )
+                recommendations.append("Consider improving gender balance in cast representation")
 
         if not recommendations:
-            recommendations.append(
-                "Dataset shows good diversity with minimal detected bias"
-            )
+            recommendations.append("Dataset shows good diversity with minimal detected bias")
 
         return recommendations
 
@@ -725,9 +649,7 @@ class DataValidator:
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
         # Generate visualizations
-        viz_paths = self._create_visualizations(
-            bias_metrics, movies, Path(output_path).parent
-        )
+        viz_paths = self._create_visualizations(bias_metrics, movies, Path(output_path).parent)
 
         # HTML template
         html_template = """
@@ -904,14 +826,10 @@ class DataValidator:
             "report_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "total_movies": validation_result.summary["total_movies"],
             "valid_movies": validation_result.summary["valid_movies"],
-            "validity_rate": round(
-                validation_result.summary["completeness_rate"] * 100, 1
-            ),
+            "validity_rate": round(validation_result.summary["completeness_rate"] * 100, 1),
             "validation_result": validation_result,
             "bias_metrics": bias_metrics,
-            "field_completeness": validation_result.summary.get(
-                "field_completeness", {}
-            ),
+            "field_completeness": validation_result.summary.get("field_completeness", {}),
             "visualizations": viz_paths,
             "validation_runtime": "N/A",  # Would track actual runtime
             "memory_usage": "N/A",  # Would track actual memory usage
@@ -947,9 +865,7 @@ class DataValidator:
                 genre_data = bias_metrics.genre_diversity["genre_distribution"]
 
                 # Take top 10 genres for readability
-                sorted_genres = sorted(
-                    genre_data.items(), key=lambda x: x[1], reverse=True
-                )[:10]
+                sorted_genres = sorted(genre_data.items(), key=lambda x: x[1], reverse=True)[:10]
                 labels, sizes = zip(*sorted_genres)
 
                 plt.pie(sizes, labels=labels, autopct="%1.1f%%", startangle=90)
@@ -982,9 +898,7 @@ class DataValidator:
                 plt.figure(figsize=(10, 6))
                 ratings = [movie.ratings.average for movie in movies]
 
-                plt.hist(
-                    ratings, bins=20, alpha=0.7, color="lightcoral", edgecolor="black"
-                )
+                plt.hist(ratings, bins=20, alpha=0.7, color="lightcoral", edgecolor="black")
                 plt.title("Rating Distribution", fontsize=16, fontweight="bold")
                 plt.xlabel("Average Rating")
                 plt.ylabel("Number of Movies")
@@ -1041,9 +955,7 @@ if __name__ == "__main__":
 
     # Validate dataset
     validation_result, valid_movies = validator.validate_dataset(sample_movies)
-    print(
-        f"Validation: {validation_result.is_valid}, Valid movies: {len(valid_movies)}"
-    )
+    print(f"Validation: {validation_result.is_valid}, Valid movies: {len(valid_movies)}")
 
     # Detect bias
     if valid_movies:

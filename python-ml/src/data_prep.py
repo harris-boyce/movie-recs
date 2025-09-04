@@ -18,10 +18,9 @@ import psutil
 import yaml
 
 from .acquisition import DatasetDownloader
-from .validation import BiasMetrics, DataValidator, ValidationResult
 from .preprocessing import FeatureEngineer
 from .schema import Movie
-
+from .validation import BiasMetrics, DataValidator, ValidationResult
 
 logger = logging.getLogger(__name__)
 
@@ -101,10 +100,7 @@ class PipelineConfig:
                 raise ValueError(f"Missing required config section: {key}")
 
         # Validate numeric values
-        if (
-            self.config["processing"]["max_movies"]
-            < self.config["processing"]["min_movies"]
-        ):
+        if self.config["processing"]["max_movies"] < self.config["processing"]["min_movies"]:
             raise ValueError("max_movies must be >= min_movies")
 
         if not 0 <= self.config["quality_thresholds"]["completeness_min"] <= 1:
@@ -155,9 +151,7 @@ class PipelineState:
 
     def add_error(self, error: Exception, step: str) -> None:
         """Add error to log."""
-        self.error_log.append(
-            {"step": step, "error": str(error), "timestamp": datetime.now().isoformat()}
-        )
+        self.error_log.append({"step": step, "error": str(error), "timestamp": datetime.now().isoformat()})
 
     def update_memory_usage(self) -> None:
         """Update current memory usage."""
@@ -178,14 +172,8 @@ class PipelineState:
             "steps_completed": len(self.steps_completed),
             "total_movies": self.total_movies,
             "valid_movies": self.valid_movies,
-            "success_rate": (
-                self.valid_movies / self.total_movies if self.total_movies > 0 else 0
-            ),
-            "memory_peak_mb": (
-                max([m["memory_mb"] for m in self.memory_usage.values()])
-                if self.memory_usage
-                else 0
-            ),
+            "success_rate": (self.valid_movies / self.total_movies if self.total_movies > 0 else 0),
+            "memory_peak_mb": (max([m["memory_mb"] for m in self.memory_usage.values()]) if self.memory_usage else 0),
             "errors": len(self.error_log),
             "current_step": self.current_step,
         }
@@ -341,9 +329,7 @@ class DataPipeline:
                 with open(file_path, "r") as f:
                     return json.load(f)
 
-        raise FileNotFoundError(
-            "No existing data found. Run pipeline with download enabled."
-        )
+        raise FileNotFoundError("No existing data found. Run pipeline with download enabled.")
 
     def _load_movie_data(self, data_path: Path) -> List[Dict[str, Any]]:
         """Load movie data from various formats."""
@@ -387,17 +373,13 @@ class DataPipeline:
             },
         ]
 
-    def _run_validation_step(
-        self, movies_data: List[Dict[str, Any]]
-    ) -> Tuple[ValidationResult, List[Movie]]:
+    def _run_validation_step(self, movies_data: List[Dict[str, Any]]) -> Tuple[ValidationResult, List[Movie]]:
         """Run data validation step."""
         self.state.start_step("data_validation")
         self.state.update_memory_usage()
 
         try:
-            validation_result, valid_movies = self.validator.validate_dataset(
-                movies_data
-            )
+            validation_result, valid_movies = self.validator.validate_dataset(movies_data)
 
             self.state.valid_movies = len(valid_movies)
             self.state.complete_step("data_validation", validation_result)
@@ -405,9 +387,7 @@ class DataPipeline:
             # Check if we meet minimum requirements
             min_movies = self.config.config["processing"]["min_movies"]
             if len(valid_movies) < min_movies:
-                raise ValueError(
-                    f"Too few valid movies: {len(valid_movies)} < {min_movies}"
-                )
+                raise ValueError(f"Too few valid movies: {len(valid_movies)} < {min_movies}")
 
             return validation_result, valid_movies
 
@@ -429,9 +409,7 @@ class DataPipeline:
             logger.error(f"Bias detection failed: {e}")
             raise
 
-    def _run_feature_engineering_step(
-        self, valid_movies: List[Movie]
-    ) -> Dict[str, Any]:
+    def _run_feature_engineering_step(self, valid_movies: List[Movie]) -> Dict[str, Any]:
         """Run feature engineering step."""
         self.state.start_step("feature_engineering")
         self.state.update_memory_usage()
@@ -491,9 +469,7 @@ class DataPipeline:
 
             # Export validation report
             report_path = "data/reports/validation_report.html"
-            self.validator.generate_html_report(
-                validation_result, bias_metrics, valid_movies, report_path
-            )
+            self.validator.generate_html_report(validation_result, bias_metrics, valid_movies, report_path)
             exported_files["validation_report"] = report_path
 
             self.state.exported_formats = export_formats
@@ -522,25 +498,19 @@ class DataPipeline:
                 "is_valid": validation_result.is_valid,
                 "error_count": validation_result.error_count,
                 "warning_count": validation_result.warning_count,
-                "completeness_rate": validation_result.summary.get(
-                    "completeness_rate", 0
-                ),
+                "completeness_rate": validation_result.summary.get("completeness_rate", 0),
             },
             "bias_analysis": {
                 "overall_bias_score": bias_metrics.overall_bias_score,
                 "recommendations_count": len(bias_metrics.recommendations),
                 "genre_diversity": bias_metrics.genre_diversity.get("unique_genres", 0),
-                "geographic_diversity": bias_metrics.geographic_distribution.get(
-                    "unique_countries", 0
-                ),
+                "geographic_diversity": bias_metrics.geographic_distribution.get("unique_countries", 0),
             },
             "feature_engineering": {
                 "total_features": len(split_data["feature_names"]),
                 "train_samples": split_data["train"]["features"].shape[0],
                 "test_samples": split_data["test"]["features"].shape[0],
-                "feature_categories": self._count_feature_categories(
-                    split_data["feature_names"]
-                ),
+                "feature_categories": self._count_feature_categories(split_data["feature_names"]),
             },
             "generated_at": datetime.now().isoformat(),
             "version": "1.0",
@@ -559,9 +529,7 @@ class DataPipeline:
             "temporal": len([n for n in feature_names if n.startswith("decade_")]),
             "runtime": len([n for n in feature_names if n.startswith("runtime_")]),
             "rating": len([n for n in feature_names if n.startswith("rating_")]),
-            "cast_crew": len(
-                [n for n in feature_names if n.startswith(("cast_", "crew_"))]
-            ),
+            "cast_crew": len([n for n in feature_names if n.startswith(("cast_", "crew_"))]),
         }
 
         return categories
@@ -569,9 +537,7 @@ class DataPipeline:
 
 def create_cli() -> argparse.ArgumentParser:
     """Create command-line interface."""
-    parser = argparse.ArgumentParser(
-        description="MovieRecs Data Pipeline - Complete data processing pipeline"
-    )
+    parser = argparse.ArgumentParser(description="MovieRecs Data Pipeline - Complete data processing pipeline")
 
     parser.add_argument(
         "--config",
@@ -588,13 +554,9 @@ def create_cli() -> argparse.ArgumentParser:
         help="Pipeline step to run",
     )
 
-    parser.add_argument(
-        "--force-refresh", action="store_true", help="Force re-download of data"
-    )
+    parser.add_argument("--force-refresh", action="store_true", help="Force re-download of data")
 
-    parser.add_argument(
-        "--skip-download", action="store_true", help="Skip download step"
-    )
+    parser.add_argument("--skip-download", action="store_true", help="Skip download step")
 
     parser.add_argument(
         "--export-formats",
@@ -635,9 +597,7 @@ def main():
 
         if args.dry_run:
             print("Dry run - would execute the following steps:")
-            print(
-                f"1. Data acquisition (force_refresh={args.force_refresh}, skip={args.skip_download})"
-            )
+            print(f"1. Data acquisition (force_refresh={args.force_refresh}, skip={args.skip_download})")
             print(f"2. Data validation")
             print(f"3. Bias detection")
             print(f"4. Feature engineering")
@@ -653,17 +613,13 @@ def main():
             )
         else:
             # Individual step execution would be implemented here
-            raise NotImplementedError(
-                f"Individual step execution not yet implemented: {args.step}"
-            )
+            raise NotImplementedError(f"Individual step execution not yet implemented: {args.step}")
 
         # Print results
         if results["status"] == "success":
             print("\n🎉 Pipeline completed successfully!")
             summary = results["summary"]
-            print(
-                f"📊 Processed {summary['total_movies']} movies ({summary['valid_movies']} valid)"
-            )
+            print(f"📊 Processed {summary['total_movies']} movies ({summary['valid_movies']} valid)")
             print(f"⏱️  Execution time: {summary['execution_time_seconds']:.1f} seconds")
             print(f"💾 Memory peak: {summary['memory_peak_mb']:.1f} MB")
             print(f"🎯 Features generated: {results['feature_info']['feature_count']}")

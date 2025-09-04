@@ -11,13 +11,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classif
-from sklearn.preprocessing import (
-    MinMaxScaler,
-    RobustScaler,
-    StandardScaler,
-)
 from sklearn.decomposition import PCA
+from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classif
+from sklearn.preprocessing import MinMaxScaler, RobustScaler, StandardScaler
 
 try:
     import pandas as pd
@@ -172,9 +168,7 @@ class ScalingUtilities:
         }
 
         if scaler_type not in scalers:
-            raise ValueError(
-                f"Unknown scaler type: {scaler_type}. Available: {list(scalers.keys())}"
-            )
+            raise ValueError(f"Unknown scaler type: {scaler_type}. Available: {list(scalers.keys())}")
 
         return scalers[scaler_type]
 
@@ -239,9 +233,7 @@ class ScalingUtilities:
 
         for prefix, scaler_type in group_scalers.items():
             # Find feature indices matching prefix
-            indices = [
-                i for i, name in enumerate(feature_names) if name.startswith(prefix)
-            ]
+            indices = [i for i, name in enumerate(feature_names) if name.startswith(prefix)]
 
             if indices:
                 group_features = features[:, indices]
@@ -251,9 +243,7 @@ class ScalingUtilities:
                 scaled_features[:, indices] = scaled_group
 
                 fitted_scalers[prefix] = scaler
-                logger.info(
-                    f"Scaled {len(indices)} features with prefix '{prefix}' using {scaler_type}"
-                )
+                logger.info(f"Scaled {len(indices)} features with prefix '{prefix}' using {scaler_type}")
 
         return scaled_features, fitted_scalers
 
@@ -372,16 +362,12 @@ class FeatureSelector:
         selected_features = selector.fit_transform(features, targets)
         selected_indices = selector.get_support(indices=True)
 
-        logger.info(
-            f"Selected {len(selected_indices)} features out of {features.shape[1]}"
-        )
+        logger.info(f"Selected {len(selected_indices)} features out of {features.shape[1]}")
 
         return selected_features, selected_indices, selector
 
     @staticmethod
-    def select_by_variance(
-        features: np.ndarray, threshold: float = 0.01
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def select_by_variance(features: np.ndarray, threshold: float = 0.01) -> Tuple[np.ndarray, np.ndarray]:
         """
         Select features by variance threshold.
 
@@ -396,9 +382,7 @@ class FeatureSelector:
         selected_indices = np.where(variances > threshold)[0]
         selected_features = features[:, selected_indices]
 
-        logger.info(
-            f"Selected {len(selected_indices)} features with variance > {threshold}"
-        )
+        logger.info(f"Selected {len(selected_indices)} features with variance > {threshold}")
 
         return selected_features, selected_indices
 
@@ -421,12 +405,8 @@ class FeatureSelector:
             transformer = PCA(n_components=n_components)
             reduced_features = transformer.fit_transform(features)
 
-            logger.info(
-                f"Reduced dimensionality from {features.shape[1]} to {n_components}"
-            )
-            logger.info(
-                f"Explained variance ratio: {transformer.explained_variance_ratio_.sum():.3f}"
-            )
+            logger.info(f"Reduced dimensionality from {features.shape[1]} to {n_components}")
+            logger.info(f"Explained variance ratio: {transformer.explained_variance_ratio_.sum():.3f}")
 
             return reduced_features, transformer
         else:
@@ -482,14 +462,10 @@ class FeatureAnalyzer:
             "high_correlation_pairs": high_corr_pairs,
             "n_high_corr_pairs": len(high_corr_pairs),
             "threshold": threshold,
-            "max_correlation": (
-                corr_matrix.abs().values.max() if not corr_matrix.empty else 0
-            ),
+            "max_correlation": (corr_matrix.abs().values.max() if not corr_matrix.empty else 0),
         }
 
-        logger.info(
-            f"Found {len(high_corr_pairs)} highly correlated pairs (|r| > {threshold})"
-        )
+        logger.info(f"Found {len(high_corr_pairs)} highly correlated pairs (|r| > {threshold})")
 
         return analysis
 
@@ -516,15 +492,10 @@ class FeatureAnalyzer:
 
         # Group by feature category
         name_mapper = FeatureNameMapper()
-        categories = name_mapper.get_feature_categories(
-            [name for name, _ in top_features]
-        )
+        categories = name_mapper.get_feature_categories([name for name, _ in top_features])
 
         summary = {
-            "top_features": [
-                {"name": name, "importance": float(importance)}
-                for name, importance in top_features
-            ],
+            "top_features": [{"name": name, "importance": float(importance)} for name, importance in top_features],
             "categories_represented": list(categories.keys()),
             "total_features": len(feature_names),
             "importance_stats": {
@@ -630,9 +601,7 @@ if __name__ == "__main__":
 
     # Test scaling utilities
     sample_features = np.random.randn(100, len(sample_feature_names))
-    scaled_features, scalers = ScalingUtilities.scale_feature_groups(
-        sample_features, sample_feature_names
-    )
+    scaled_features, scalers = ScalingUtilities.scale_feature_groups(sample_features, sample_feature_names)
     print(f"\nScaled features shape: {scaled_features.shape}")
     print(f"Fitted scalers: {list(scalers.keys())}")
 
