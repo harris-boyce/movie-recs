@@ -38,3 +38,6 @@ PyYAML>=6.0
 matplotlib>=3.5.0
 seaborn>=0.11.0
 jinja2>=3.0.0
+
+# Feature engineering
+scikit-learn>=1.1.0

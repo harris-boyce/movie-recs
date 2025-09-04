@@ -11,6 +11,8 @@ __version__ = "0.1.0"
 from .acquisition import DatasetDownloader, DataAcquisitionError
 from .validation import DataValidator, BiasMetrics
 from .schema import Movie, MovieCollection, ValidationResult, QualityThresholds
+from .preprocessing import FeatureEngineer
+from .feature_utils import FeatureNameMapper, ScalingUtilities
 
 __all__ = [
     "DatasetDownloader", 
@@ -20,5 +22,8 @@ __all__ = [
     "Movie",
     "MovieCollection",
     "ValidationResult",
-    "QualityThresholds"
+    "QualityThresholds",
+    "FeatureEngineer",
+    "FeatureNameMapper",
+    "ScalingUtilities"
 ]
