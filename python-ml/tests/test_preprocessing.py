@@ -9,14 +9,15 @@ from unittest.mock import Mock, patch
 
 import numpy as np
 import pytest
-from src.preprocessing import FeatureEngineer
+
 from src.feature_utils import (
-    FeatureNameMapper,
-    ScalingUtilities,
     CategoryEncoder,
+    FeatureNameMapper,
     FeatureSelector,
+    ScalingUtilities,
 )
-from src.schema import Movie, Genre, Ratings, PersonInfo, Metadata, Language
+from src.preprocessing import FeatureEngineer
+from src.schema import Genre, Language, Metadata, Movie, PersonInfo, Ratings
 
 
 class TestFeatureEngineer(unittest.TestCase):

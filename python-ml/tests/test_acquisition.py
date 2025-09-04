@@ -6,12 +6,13 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
+
 from src.acquisition import (
-    DatasetDownloader,
     DataAcquisitionError,
+    DatasetDownloader,
     validate_license_compliance,
 )
 

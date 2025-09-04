@@ -8,16 +8,15 @@ feature engineering, and multiple export formats for ML training.
 import json
 import logging
 import re
-import string
 from collections import Counter
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 import warnings
 
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, MinMaxScaler, LabelEncoder
+from sklearn.preprocessing import StandardScaler
 
 try:
     import pandas as pd
@@ -27,7 +26,7 @@ except ImportError:
     PANDAS_AVAILABLE = False
     warnings.warn("Pandas not available, some features will be limited")
 
-from .schema import Movie, Genre, Language
+from .schema import Genre, Movie
 
 
 logger = logging.getLogger(__name__)

@@ -8,15 +8,14 @@ feature name mapping, scaling utilities, category encoding, and feature selectio
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classif
 from sklearn.preprocessing import (
-    StandardScaler,
     MinMaxScaler,
     RobustScaler,
-    LabelEncoder,
+    StandardScaler,
 )
 from sklearn.decomposition import PCA
 

@@ -12,15 +12,12 @@ This module provides robust data download capabilities with:
 import hashlib
 import json
 import logging
-import os
 import tempfile
-import time
-import urllib.request
 import zipfile
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Any, List
-from urllib.error import URLError, HTTPError
+from typing import Any, Dict, List, Optional
+from urllib.error import HTTPError, URLError
 
 import requests
 import yaml

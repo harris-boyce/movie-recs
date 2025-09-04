@@ -10,14 +10,14 @@ capabilities including:
 - Configurable thresholds and metrics
 """
 
-import json
 import logging
 import statistics
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Set
-import warnings
+from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 try:
     import matplotlib.pyplot as plt
@@ -47,17 +47,13 @@ except ImportError:
 from pydantic import BaseModel, Field
 
 from .schema import (
-    Movie,
-    MovieCollection,
-    ValidationResult,
-    QualityThresholds,
-    create_movie_from_dict,
     Genre,
     Language,
+    Movie,
+    QualityThresholds,
+    ValidationResult,
+    create_movie_from_dict,
 )
-
-
-logger = logging.getLogger(__name__)
 
 
 class BiasMetrics(BaseModel):
