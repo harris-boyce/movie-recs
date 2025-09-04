@@ -2,7 +2,7 @@
   "name": "MovieRecs ML-Python",
   "dockerFile": "ml-python/Dockerfile",
   "context": "..",
-  "workspaceFolder": "/workspace",
+  // "workspaceFolder": "/workspace",
   "shutdownAction": "stopContainer",
   
   "features": {
