@@ -8,8 +8,9 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import pytest
-from src.validation import DataValidator, BiasMetrics
-from src.schema import Movie, Genre, Language, Ratings, PersonInfo
+
+from src.schema import Genre, Language, Movie, PersonInfo, Ratings
+from src.validation import BiasMetrics, DataValidator
 
 
 class TestDataValidator(unittest.TestCase):

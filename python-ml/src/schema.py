@@ -6,8 +6,8 @@ with comprehensive validation rules, custom validators, and schema versioning su
 """
 
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
 from enum import Enum
+from typing import Any, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 

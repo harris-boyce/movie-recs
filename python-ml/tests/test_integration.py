@@ -12,9 +12,10 @@ import unittest
 from pathlib import Path
 
 import psutil
+
 from src.data_prep import DataPipeline
-from src.validation import DataValidator
 from src.preprocessing import FeatureEngineer
+from src.validation import DataValidator
 
 
 class TestPipelineIntegration(unittest.TestCase):

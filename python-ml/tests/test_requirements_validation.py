@@ -7,14 +7,14 @@ have been successfully implemented and meet the specified criteria.
 
 import json
 import tempfile
+import time
 import unittest
 from pathlib import Path
-import time
 
-from src.data_prep import DataPipeline
-from src.validation import DataValidator
-from src.preprocessing import FeatureEngineer
 from src.acquisition import DatasetDownloader
+from src.data_prep import DataPipeline
+from src.preprocessing import FeatureEngineer
+from src.validation import DataValidator
 
 
 class TestRequirementsValidation(unittest.TestCase):

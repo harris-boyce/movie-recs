@@ -10,19 +10,17 @@ import json
 import logging
 import os
 import sys
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import psutil
 import yaml
-from tqdm import tqdm
 
-from .acquisition import DatasetDownloader, DataAcquisitionError
-from .validation import DataValidator, BiasMetrics, ValidationResult
+from .acquisition import DatasetDownloader
+from .validation import BiasMetrics, DataValidator, ValidationResult
 from .preprocessing import FeatureEngineer
-from .schema import Movie, create_movie_from_dict
+from .schema import Movie
 
 
 logger = logging.getLogger(__name__)

@@ -6,9 +6,10 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
+
 from src.data_prep import DataPipeline, PipelineConfig, PipelineState
 
 
