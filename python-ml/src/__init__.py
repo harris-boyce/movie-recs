@@ -13,6 +13,7 @@ from .validation import DataValidator, BiasMetrics
 from .schema import Movie, MovieCollection, ValidationResult, QualityThresholds
 from .preprocessing import FeatureEngineer
 from .feature_utils import FeatureNameMapper, ScalingUtilities
+from .data_prep import DataPipeline, PipelineConfig, PipelineState
 
 __all__ = [
     "DatasetDownloader", 
@@ -25,5 +26,8 @@ __all__ = [
     "QualityThresholds",
     "FeatureEngineer",
     "FeatureNameMapper",
-    "ScalingUtilities"
+    "ScalingUtilities",
+    "DataPipeline",
+    "PipelineConfig",
+    "PipelineState"
 ]
