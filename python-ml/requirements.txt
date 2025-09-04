@@ -1,0 +1,29 @@
+# Core ML/Data Science
+pandas>=1.5.0
+numpy>=1.21.0
+scikit-learn>=1.1.0
+scipy>=1.9.0
+
+# Deep Learning & Model Export
+torch>=1.13.0
+onnx>=1.12.0
+onnxruntime>=1.13.0
+
+# MLflow & Experiment Tracking
+mlflow>=2.0.0
+
+# Vector Search & Embeddings
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.0
+
+# Data Processing
+pyarrow>=9.0.0
+polars>=0.15.0
+
+# Development
+jupyter>=1.0.0
+jupyterlab>=3.5.0
+pytest>=7.0.0
+black>=22.0.0
+flake8>=5.0.0
+pre-commit>=2.20.0

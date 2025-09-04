@@ -1,0 +1,56 @@
+{
+  "name": "MovieRecs ML-Python",
+  "dockerFile": "ml-python/Dockerfile",
+  "context": "..",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopContainer",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  
+  "mounts": [
+    "source=${localWorkspaceFolder}/volumes/mlflow,target=/mlflow,type=bind",
+    "source=${localWorkspaceFolder}/volumes/models,target=/models,type=bind",
+    "source=${localWorkspaceFolder}/volumes/data,target=/data,type=bind"
+  ],
+  
+  "forwardPorts": [8888, 5000, 8080],
+  "portsAttributes": {
+    "8888": {"label": "Jupyter Lab", "requireLocalPort": true},
+    "5000": {"label": "MLflow UI", "requireLocalPort": true},
+    "8080": {"label": "Model API", "requireLocalPort": true}
+  },
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.flake8",
+        "ms-python.black-formatter",
+        "ms-toolsai.jupyter",
+        "ms-toolsai.vscode-jupyter-cell-tags",
+        "ms-toolsai.vscode-jupyter-slideshow",
+        "charliermarsh.ruff",
+        "tamasfe.even-better-toml"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/conda/bin/python",
+        "python.formatting.provider": "black",
+        "python.linting.enabled": true,
+        "python.linting.flake8Enabled": true,
+        "jupyter.askForKernelRestart": false
+      }
+    }
+  },
+  
+  "containerEnv": {
+    "MLFLOW_TRACKING_URI": "file:///mlflow",
+    "PYTHONPATH": "/workspace/python-ml/src",
+    "JUPYTER_ENABLE_LAB": "yes"
+  },
+  
+  "postCreateCommand": "bash .devcontainer/ml-python/post-create.sh",
+  "postStartCommand": "bash .devcontainer/ml-python/post-start.sh"
+}

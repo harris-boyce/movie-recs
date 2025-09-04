@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  mock-api:
+    image: node:18-alpine
+    ports:
+      - "5000:5000"
+    volumes:
+      - ../../examples/api_examples:/data
+    working_dir: /data
+    command: npx json-server --watch mock-responses.json --port 5000 --host 0.0.0.0
+
+  vector-service:
+    build: ../../vector-service
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../volumes/vector-db:/data
+    environment:
+      - DATA_PATH=/data

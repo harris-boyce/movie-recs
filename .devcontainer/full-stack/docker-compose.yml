@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  workspace:
+    build: 
+      context: ../..
+      dockerfile: .devcontainer/full-stack/Dockerfile
+    volumes:
+      - ../..:/workspace:cached
+      - ../../volumes/mlflow:/mlflow
+      - ../../volumes/models:/models
+      - ../../volumes/data:/data
+      - ../../volumes/vector-db:/vector-db
+    working_dir: /workspace
+    command: sleep infinity
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+      - WEAVIATE_URL=http://weaviate:8080
+      - MODEL_PATH=/models
+      - PYTHONPATH=/workspace/python-ml/src
+    depends_on:
+      - mlflow-server
+      - weaviate
+    networks:
+      - movierecs-dev
+
+  mlflow-server:
+    image: python:3.10-slim
+    ports:
+      - "5555:5000"
+    volumes:
+      - ../../volumes/mlflow:/mlflow
+    command: >
+      bash -c "pip install mlflow==2.8.1 && 
+               mlflow server --backend-store-uri file:///mlflow 
+                            --default-artifact-root file:///mlflow/artifacts 
+                            --host 0.0.0.0 --port 5000"
+    networks:
+      - movierecs-dev
+
+  weaviate:
+    image: semitechnologies/weaviate:1.21.2
+    ports:
+      - "8080:8080"
+    environment:
+      - QUERY_DEFAULTS_LIMIT=20
+      - AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true
+      - PERSISTENCE_DATA_PATH=/var/lib/weaviate
+      - DEFAULT_VECTORIZER_MODULE=none
+      - ENABLE_MODULES=text2vec-openai,text2vec-transformers
+    volumes:
+      - ../../volumes/vector-db:/var/lib/weaviate
+    networks:
+      - movierecs-dev
+
+  vector-service:
+    build: ../../vector-service
+    ports:
+      - "8081:8080"
+    volumes:
+      - ../../volumes/vector-db:/data
+      - ../../volumes/data:/raw-data
+    environment:
+      - DATA_PATH=/data
+      - WEAVIATE_URL=http://weaviate:8080
+    depends_on:
+      - weaviate
+    networks:
+      - movierecs-dev
+
+networks:
+  movierecs-dev:
+    driver: bridge
+
+volumes:
+  mlflow-data:
+  weaviate-data:
+  models-data:
