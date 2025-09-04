@@ -1,0 +1,49 @@
+{
+  "name": "MovieRecs Frontend",
+  "dockerFile": "Dockerfile", 
+  "context": "..",
+  "workspaceFolder": "/workspace",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "18"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  
+  "forwardPorts": [3000, 5000, 8080],
+  "portsAttributes": {
+    "3000": {"label": "React Dev Server", "requireLocalPort": true},
+    "5000": {"label": ".NET API", "requireLocalPort": false},
+    "8080": {"label": "Vector Service", "requireLocalPort": false}
+  },
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ms-vscode.vscode-typescript-next",
+        "ms-vscode.vscode-eslint",
+        "ms-vscode.vscode-json",
+        "humao.rest-client"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "typescript.preferences.importModuleSpecifier": "relative"
+      }
+    }
+  },
+  
+  "containerEnv": {
+    "NODE_ENV": "development",
+    "VITE_API_URL": "http://localhost:5000",
+    "VITE_VECTOR_SERVICE_URL": "http://localhost:8080"
+  },
+  
+  "postCreateCommand": "bash .devcontainer/frontend-node/post-create.sh",
+  
+  "initializeCommand": "docker-compose -f .devcontainer/frontend-node/docker-compose.override.yml up -d",
+  "shutdownAction": "stopCompose"
+}

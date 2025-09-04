@@ -1,0 +1,49 @@
+{
+  "name": "MovieRecs .NET Backend",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  "workspaceFolder": "/workspace",
+  
+  "features": {
+    "ghcr.io/devcontainers/features/dotnet:2": {
+      "version": "8.0"
+    },
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  
+  "mounts": [
+    "source=${localWorkspaceFolder}/volumes/models,target=/models,type=bind",
+    "source=${localWorkspaceFolder}/volumes/mlflow,target=/mlflow,type=bind"
+  ],
+  
+  "forwardPorts": [5000, 5001, 8080],
+  "portsAttributes": {
+    "5000": {"label": ".NET API (HTTP)", "requireLocalPort": true},
+    "5001": {"label": ".NET API (HTTPS)", "requireLocalPort": true},
+    "8080": {"label": "Vector Service", "requireLocalPort": true}
+  },
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.vscodeintellicode-csharp",
+        "humao.rest-client",
+        "ms-vscode.vscode-json"
+      ]
+    }
+  },
+  
+  "containerEnv": {
+    "ASPNETCORE_ENVIRONMENT": "Development",
+    "ASPNETCORE_URLS": "http://+:5000;https://+:5001",
+    "MODEL_PATH": "/models",
+    "MLFLOW_TRACKING_URI": "file:///mlflow"
+  },
+  
+  "postCreateCommand": "bash .devcontainer/backend-dotnet/post-create.sh",
+  
+  "initializeCommand": "docker-compose -f .devcontainer/backend-dotnet/docker-compose.override.yml up -d",
+  "shutdownAction": "stopCompose"
+}

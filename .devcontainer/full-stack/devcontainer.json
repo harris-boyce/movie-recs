@@ -1,0 +1,29 @@
+{
+  "name": "MovieRecs Full Stack",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "workspace",
+  "workspaceFolder": "/workspace",
+  
+  "forwardPorts": [3000, 5000, 8080, 8888, 5555],
+  "portsAttributes": {
+    "3000": {"label": "Frontend", "requireLocalPort": true},
+    "5000": {"label": ".NET API", "requireLocalPort": true},
+    "8080": {"label": "Vector Service", "requireLocalPort": true},
+    "8888": {"label": "Jupyter", "requireLocalPort": true},
+    "5555": {"label": "MLflow UI", "requireLocalPort": true}
+  },
+  
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-dotnettools.csharp",
+        "ms-vscode.vscode-typescript-next",
+        "humao.rest-client",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+  
+  "postCreateCommand": "bash .devcontainer/full-stack/post-create.sh"
+}
