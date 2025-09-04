@@ -9,8 +9,16 @@ preprocessing, validation, and model training capabilities.
 __version__ = "0.1.0"
 
 from .acquisition import DatasetDownloader, DataAcquisitionError
+from .validation import DataValidator, BiasMetrics
+from .schema import Movie, MovieCollection, ValidationResult, QualityThresholds
 
 __all__ = [
     "DatasetDownloader", 
-    "DataAcquisitionError"
+    "DataAcquisitionError",
+    "DataValidator",
+    "BiasMetrics", 
+    "Movie",
+    "MovieCollection",
+    "ValidationResult",
+    "QualityThresholds"
 ]
