@@ -1,8 +1,8 @@
 """
 MovieRecs ML Pipeline Package
 
-This package provides the core machine learning pipeline components for 
-the MovieRecs recommendation system, including data acquisition, 
+This package provides the core machine learning pipeline components for
+the MovieRecs recommendation system, including data acquisition,
 preprocessing, validation, and model training capabilities.
 """
 
@@ -16,10 +16,10 @@ from .feature_utils import FeatureNameMapper, ScalingUtilities
 from .data_prep import DataPipeline, PipelineConfig, PipelineState
 
 __all__ = [
-    "DatasetDownloader", 
+    "DatasetDownloader",
     "DataAcquisitionError",
     "DataValidator",
-    "BiasMetrics", 
+    "BiasMetrics",
     "Movie",
     "MovieCollection",
     "ValidationResult",
@@ -29,5 +29,5 @@ __all__ = [
     "ScalingUtilities",
     "DataPipeline",
     "PipelineConfig",
-    "PipelineState"
+    "PipelineState",
 ]
