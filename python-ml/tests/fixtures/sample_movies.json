@@ -1,0 +1,296 @@
+[
+  {
+    "movie_id": "1",
+    "title": "The Shawshank Redemption",
+    "synopsis": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency. This powerful drama explores themes of hope, friendship, and the human spirit's resilience in the face of adversity within the confines of a maximum-security prison.",
+    "release_year": 1994,
+    "runtime_mins": 142,
+    "genres": ["Drama"],
+    "cast": [
+      {
+        "name": "Tim Robbins",
+        "character": "Andy Dufresne",
+        "role": "actor",
+        "birth_year": 1958,
+        "gender": "male",
+        "ethnicity": "Caucasian"
+      },
+      {
+        "name": "Morgan Freeman",
+        "character": "Ellis Boyd 'Red' Redding",
+        "role": "actor",
+        "birth_year": 1937,
+        "gender": "male",
+        "ethnicity": "African American"
+      }
+    ],
+    "crew": [
+      {
+        "name": "Frank Darabont",
+        "role": "director",
+        "birth_year": 1959,
+        "gender": "male"
+      }
+    ],
+    "ratings": {
+      "average": 9.3,
+      "count": 2500000,
+      "distribution": {
+        "1": 12000,
+        "2": 8000,
+        "3": 15000,
+        "4": 25000,
+        "5": 45000,
+        "6": 85000,
+        "7": 180000,
+        "8": 350000,
+        "9": 800000,
+        "10": 980000
+      }
+    },
+    "metadata": {
+      "language": "en",
+      "country": "US",
+      "budget": 25000000,
+      "revenue": 16000000,
+      "production_companies": ["Castle Rock Entertainment", "Columbia Pictures"],
+      "keywords": ["prison", "friendship", "hope", "redemption", "injustice"],
+      "imdb_id": "tt0111161",
+      "tmdb_id": 278
+    }
+  },
+  {
+    "movie_id": "2",
+    "title": "The Godfather",
+    "synopsis": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son. Set in post-war America, this epic tale of power, family loyalty, and moral corruption spans a decade of violence and betrayal within the Corleone crime family.",
+    "release_year": 1972,
+    "runtime_mins": 175,
+    "genres": ["Crime", "Drama"],
+    "cast": [
+      {
+        "name": "Marlon Brando",
+        "character": "Don Vito Corleone",
+        "role": "actor",
+        "birth_year": 1924,
+        "gender": "male",
+        "ethnicity": "Caucasian"
+      },
+      {
+        "name": "Al Pacino",
+        "character": "Michael Corleone",
+        "role": "actor",
+        "birth_year": 1940,
+        "gender": "male",
+        "ethnicity": "Italian American"
+      }
+    ],
+    "crew": [
+      {
+        "name": "Francis Ford Coppola",
+        "role": "director",
+        "birth_year": 1939,
+        "gender": "male"
+      }
+    ],
+    "ratings": {
+      "average": 9.2,
+      "count": 1800000,
+      "distribution": {
+        "1": 8000,
+        "2": 6000,
+        "3": 12000,
+        "4": 18000,
+        "5": 32000,
+        "6": 65000,
+        "7": 145000,
+        "8": 280000,
+        "9": 650000,
+        "10": 584000
+      }
+    },
+    "metadata": {
+      "language": "en",
+      "country": "US",
+      "budget": 6000000,
+      "revenue": 245000000,
+      "production_companies": ["Paramount Pictures", "Alfran Productions"],
+      "keywords": ["mafia", "family", "power", "succession", "violence"],
+      "imdb_id": "tt0068646",
+      "tmdb_id": 238
+    }
+  },
+  {
+    "movie_id": "3",
+    "title": "Pulp Fiction",
+    "synopsis": "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption. This nonlinear narrative weaves together multiple storylines in a gritty portrayal of crime and consequence in Los Angeles.",
+    "release_year": 1994,
+    "runtime_mins": 154,
+    "genres": ["Crime", "Drama"],
+    "cast": [
+      {
+        "name": "John Travolta",
+        "character": "Vincent Vega",
+        "role": "actor",
+        "birth_year": 1954,
+        "gender": "male",
+        "ethnicity": "Caucasian"
+      },
+      {
+        "name": "Uma Thurman",
+        "character": "Mia Wallace",
+        "role": "actor",
+        "birth_year": 1970,
+        "gender": "female",
+        "ethnicity": "Caucasian"
+      }
+    ],
+    "crew": [
+      {
+        "name": "Quentin Tarantino",
+        "role": "director",
+        "birth_year": 1963,
+        "gender": "male"
+      }
+    ],
+    "ratings": {
+      "average": 8.9,
+      "count": 2000000,
+      "distribution": {
+        "1": 15000,
+        "2": 10000,
+        "3": 20000,
+        "4": 35000,
+        "5": 55000,
+        "6": 95000,
+        "7": 185000,
+        "8": 380000,
+        "9": 750000,
+        "10": 455000
+      }
+    },
+    "metadata": {
+      "language": "en",
+      "country": "US",
+      "budget": 8000000,
+      "revenue": 214000000,
+      "production_companies": ["Miramax Films", "A Band Apart"],
+      "keywords": ["nonlinear", "hitmen", "violence", "dialogue", "crime"],
+      "imdb_id": "tt0110912",
+      "tmdb_id": 680
+    }
+  },
+  {
+    "movie_id": "4",
+    "title": "Spirited Away",
+    "synopsis": "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits, and where humans are changed into beasts. A masterpiece of animation that explores themes of environmental protection, greed, and the loss of traditional values in modern Japan.",
+    "release_year": 2001,
+    "runtime_mins": 125,
+    "genres": ["Animation", "Family", "Fantasy"],
+    "cast": [
+      {
+        "name": "Rumi Hiiragi",
+        "character": "Chihiro Ogino (voice)",
+        "role": "actor",
+        "birth_year": 1987,
+        "gender": "female",
+        "ethnicity": "Japanese"
+      }
+    ],
+    "crew": [
+      {
+        "name": "Hayao Miyazaki",
+        "role": "director",
+        "birth_year": 1941,
+        "gender": "male",
+        "ethnicity": "Japanese"
+      }
+    ],
+    "ratings": {
+      "average": 9.3,
+      "count": 750000,
+      "distribution": {
+        "1": 2000,
+        "2": 1500,
+        "3": 3000,
+        "4": 5000,
+        "5": 8000,
+        "6": 15000,
+        "7": 35000,
+        "8": 95000,
+        "9": 285000,
+        "10": 300500
+      }
+    },
+    "metadata": {
+      "language": "ja",
+      "country": "JP",
+      "budget": 19000000,
+      "revenue": 365000000,
+      "production_companies": ["Studio Ghibli", "Tohokushinsha Film Corporation"],
+      "keywords": ["coming-of-age", "spirits", "magic", "environmental", "Japanese culture"],
+      "imdb_id": "tt0245429",
+      "tmdb_id": 129
+    }
+  },
+  {
+    "movie_id": "5",
+    "title": "The Dark Knight",
+    "synopsis": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice. This superhero epic explores themes of heroism, sacrifice, and moral complexity in the face of chaos and anarchy.",
+    "release_year": 2008,
+    "runtime_mins": 152,
+    "genres": ["Action", "Crime", "Drama"],
+    "cast": [
+      {
+        "name": "Christian Bale",
+        "character": "Bruce Wayne / Batman",
+        "role": "actor",
+        "birth_year": 1974,
+        "gender": "male",
+        "ethnicity": "British"
+      },
+      {
+        "name": "Heath Ledger",
+        "character": "The Joker",
+        "role": "actor",
+        "birth_year": 1979,
+        "gender": "male",
+        "ethnicity": "Australian"
+      }
+    ],
+    "crew": [
+      {
+        "name": "Christopher Nolan",
+        "role": "director",
+        "birth_year": 1970,
+        "gender": "male",
+        "ethnicity": "British"
+      }
+    ],
+    "ratings": {
+      "average": 9.0,
+      "count": 2650000,
+      "distribution": {
+        "1": 12000,
+        "2": 8000,
+        "3": 16000,
+        "4": 28000,
+        "5": 48000,
+        "6": 85000,
+        "7": 175000,
+        "8": 420000,
+        "9": 920000,
+        "10": 938000
+      }
+    },
+    "metadata": {
+      "language": "en",
+      "country": "US",
+      "budget": 185000000,
+      "revenue": 1004558444,
+      "production_companies": ["Warner Bros. Pictures", "Legendary Entertainment"],
+      "keywords": ["superhero", "vigilante", "chaos", "moral complexity", "Batman"],
+      "imdb_id": "tt0468569",
+      "tmdb_id": 155
+    }
+  }
+]

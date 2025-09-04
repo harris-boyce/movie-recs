@@ -1,0 +1,372 @@
+name: MovieRecs Data Pipeline CI
+
+on:
+  push:
+    branches: [ main, develop, 'feature/issue-*' ]
+    paths: 
+      - 'python-ml/**'
+      - '.github/workflows/data-pipeline-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths: 
+      - 'python-ml/**'
+      - '.github/workflows/data-pipeline-ci.yml'
+
+env:
+  PYTHON_VERSION: '3.10'
+  POETRY_VERSION: '1.6.1'
+
+jobs:
+  lint-and-format:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Install dependencies
+      working-directory: python-ml
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install black flake8 isort
+        
+    - name: Run Black (Code Formatting)
+      working-directory: python-ml
+      run: black --check --diff src/ tests/
+      
+    - name: Run isort (Import Sorting)
+      working-directory: python-ml
+      run: isort --check-only --diff src/ tests/
+      
+    - name: Run Flake8 (Linting)
+      working-directory: python-ml
+      run: flake8 src/ tests/ --max-line-length=88 --extend-ignore=E203,W503
+
+  test-suite:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+        
+    - name: Install Python dependencies
+      working-directory: python-ml
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-xvfb coverage
+        
+    - name: Create test directories
+      working-directory: python-ml
+      run: |
+        mkdir -p data/{raw,processed,reports,logs,temp}
+        mkdir -p configs
+        
+    - name: Run tests with coverage
+      working-directory: python-ml
+      env:
+        MOVIERECS_MAX_MOVIES: '10'
+        PYTHONPATH: 'src'
+      run: |
+        python -m pytest tests/ \
+          --cov=src \
+          --cov-report=xml \
+          --cov-report=html \
+          --cov-report=term \
+          --cov-fail-under=80 \
+          -v \
+          --tb=short
+          
+    - name: Upload coverage to Codecov
+      if: matrix.python-version == '3.10'
+      uses: codecov/codecov-action@v3
+      with:
+        file: python-ml/coverage.xml
+        directory: python-ml
+        flags: unittests
+        name: codecov-umbrella
+
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: [lint-and-format, test-suite]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Install dependencies
+      working-directory: python-ml
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Create test environment
+      working-directory: python-ml
+      run: |
+        mkdir -p data/{raw,processed,reports,logs,temp}
+        mkdir -p configs
+        cp configs/data_config.yaml configs/test_config.yaml || echo "Config file not found, using defaults"
+        
+    - name: Test pipeline with sample data
+      working-directory: python-ml
+      env:
+        MOVIERECS_MAX_MOVIES: '5'
+        MOVIERECS_OUTPUT_DIR: 'data'
+        PYTHONPATH: 'src'
+      run: |
+        python -c "
+        from src.data_prep import DataPipeline
+        import json
+        
+        # Create minimal test data
+        test_data = [
+            {
+                'movie_id': '1',
+                'title': 'Test Movie',
+                'synopsis': 'A test movie with a sufficiently long synopsis to pass validation checks.',
+                'release_year': 2000,
+                'genres': ['Drama'],
+                'ratings': {'average': 8.0, 'count': 1000}
+            }
+        ]
+        
+        # Save test data
+        with open('data/raw/test_movies.json', 'w') as f:
+            json.dump(test_data, f)
+            
+        # Run minimal pipeline test
+        try:
+            pipeline = DataPipeline()
+            results = pipeline.run_full_pipeline(
+                skip_download=True,
+                export_formats=['json']
+            )
+            print(f'Pipeline test result: {results[\"status\"]}')
+            assert results['status'] == 'success', f'Pipeline failed: {results.get(\"error\", \"Unknown error\")}'
+            print('✅ Integration test passed')
+        except Exception as e:
+            print(f'❌ Integration test failed: {e}')
+            raise
+        "
+        
+    - name: Test CLI interface
+      working-directory: python-ml
+      env:
+        PYTHONPATH: 'src'
+      run: |
+        python run_pipeline.py --dry-run --verbose
+        echo "✅ CLI test passed"
+
+  performance-benchmark:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    needs: [test-suite]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Install dependencies
+      working-directory: python-ml
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest-benchmark memory-profiler
+        
+    - name: Run performance benchmarks
+      working-directory: python-ml
+      env:
+        PYTHONPATH: 'src'
+      run: |
+        python -c "
+        import time
+        import json
+        import psutil
+        from src.data_prep import DataPipeline
+        from src.preprocessing import FeatureEngineer
+        from src.validation import DataValidator
+        
+        # Performance test data
+        test_movies = []
+        for i in range(100):
+            test_movies.append({
+                'movie_id': str(i),
+                'title': f'Test Movie {i}',
+                'synopsis': f'A comprehensive test movie synopsis for movie {i} that meets all length requirements for validation.',
+                'release_year': 2000 + (i % 25),
+                'genres': ['Drama', 'Action', 'Comedy'][i % 3:i % 3 + 1],
+                'ratings': {'average': 6.0 + (i % 40) / 10, 'count': 1000 + i * 10}
+            })
+            
+        print('🏃 Running performance benchmarks...')
+        
+        # Benchmark validation
+        start_time = time.time()
+        validator = DataValidator()
+        validation_result, valid_movies = validator.validate_dataset(test_movies)
+        validation_time = time.time() - start_time
+        
+        print(f'⏱️  Validation: {validation_time:.2f}s for {len(test_movies)} movies')
+        print(f'📊 Validation rate: {len(test_movies)/validation_time:.1f} movies/sec')
+        
+        # Benchmark feature engineering
+        if valid_movies:
+            start_time = time.time()
+            engineer = FeatureEngineer()
+            features, feature_names = engineer.process_movies(valid_movies[:20], include_text=True)
+            feature_time = time.time() - start_time
+            
+            print(f'⏱️  Feature Engineering: {feature_time:.2f}s for {len(valid_movies[:20])} movies')
+            print(f'🎯 Generated {len(feature_names)} features')
+            
+        # Memory usage
+        process = psutil.Process()
+        memory_mb = process.memory_info().rss / 1024 / 1024
+        print(f'💾 Peak memory usage: {memory_mb:.1f} MB')
+        
+        # Performance assertions
+        assert validation_time < 5.0, f'Validation too slow: {validation_time:.2f}s'
+        assert memory_mb < 500, f'Memory usage too high: {memory_mb:.1f} MB'
+        
+        print('✅ Performance benchmarks passed')
+        "
+        
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Install security tools
+      run: |
+        pip install --upgrade pip
+        pip install bandit safety
+        
+    - name: Run Bandit security scan
+      working-directory: python-ml
+      run: |
+        bandit -r src/ -f json -o bandit-report.json || true
+        bandit -r src/ || true
+        
+    - name: Run Safety check
+      working-directory: python-ml
+      run: |
+        pip install -r requirements.txt
+        safety check --json --output safety-report.json || true
+        safety check || true
+
+  data-quality-check:
+    name: Data Quality Validation
+    runs-on: ubuntu-latest
+    needs: [test-suite]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Install dependencies
+      working-directory: python-ml
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Test data validation with fixtures
+      working-directory: python-ml
+      env:
+        PYTHONPATH: 'src'
+      run: |
+        python -c "
+        import json
+        from src.validation import DataValidator
+        
+        print('🔍 Testing data validation with fixture data...')
+        
+        # Test with good data
+        with open('tests/fixtures/sample_movies.json', 'r') as f:
+            good_data = json.load(f)
+            
+        validator = DataValidator()
+        validation_result, valid_movies = validator.validate_dataset(good_data)
+        
+        print(f'✅ Good data: {len(valid_movies)}/{len(good_data)} movies valid')
+        print(f'📊 Errors: {validation_result.error_count}, Warnings: {validation_result.warning_count}')
+        
+        # Test with bad data
+        with open('tests/fixtures/malformed_data.json', 'r') as f:
+            bad_data = json.load(f)
+            
+        validation_result, valid_movies = validator.validate_dataset(bad_data)
+        
+        print(f'❌ Bad data: {len(valid_movies)}/{len(bad_data)} movies valid')
+        print(f'📊 Errors: {validation_result.error_count}, Warnings: {validation_result.warning_count}')
+        
+        assert validation_result.error_count > 0, 'Should detect errors in malformed data'
+        
+        # Test bias detection
+        with open('tests/fixtures/bias_test_data.json', 'r') as f:
+            bias_data = json.load(f)
+            
+        validation_result, valid_movies = validator.validate_dataset(bias_data)
+        if valid_movies:
+            bias_metrics = validator.detect_bias(valid_movies)
+            print(f'⚖️  Bias score: {bias_metrics.overall_bias_score:.2f}')
+            print(f'📋 Recommendations: {len(bias_metrics.recommendations)}')
+            
+        print('✅ Data quality checks passed')
+        "
+
+  build-status:
+    name: Build Status
+    runs-on: ubuntu-latest
+    needs: [lint-and-format, test-suite, integration-test, performance-benchmark, security-scan, data-quality-check]
+    if: always()
+    
+    steps:
+    - name: Check build status
+      run: |
+        if [[ "${{ needs.lint-and-format.result }}" == "success" && 
+              "${{ needs.test-suite.result }}" == "success" && 
+              "${{ needs.integration-test.result }}" == "success" && 
+              "${{ needs.performance-benchmark.result }}" == "success" ]]; then
+          echo "🎉 All checks passed! Build is successful."
+        else
+          echo "❌ Some checks failed. Please review the results."
+          exit 1
+        fi

@@ -46,6 +46,7 @@ data/raw/
 *.parquet
 !examples/**/*.json
 !.devcontainer/**/*.json
+!python-ml/tests/fixtures/*.json
 
 # Model artifacts
 *.onnx
