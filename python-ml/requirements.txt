@@ -46,3 +46,6 @@ scikit-learn>=1.1.0
 
 # System monitoring
 psutil>=5.9.0
+
+# TMDB API integration
+tmdbsimple>=2.9.0
