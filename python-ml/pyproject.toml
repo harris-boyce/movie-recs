@@ -29,8 +29,60 @@ dev = [
 packages = ["src"]
 
 [tool.black]
-line-length = 88
-target-version = ['py39', 'py310', 'py311']
+line-length = 120
+target-version = ['py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+src_paths = ["src", "tests"]
+skip_glob = ["**/migrations/*"]
+known_first_party = ["src"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.flake8]
+max-line-length = 120
+extend-ignore = [
+    "E203",  # whitespace before ':'
+    "E501",  # line too long (handled by black)
+    "W503",  # line break before binary operator
+    "W504",  # line break after binary operator
+    "E402",  # module level import not at top of file (for conditional imports)
+    "F541",  # f-string without placeholders
+    "W293",  # blank line contains whitespace
+    "F401",  # imported but unused (common in test files)
+    "F841",  # assigned to but never used (common in tests)
+]
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    ".eggs",
+    "*.egg",
+    "build",
+    "dist",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

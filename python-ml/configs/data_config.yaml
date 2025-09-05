@@ -1,0 +1,73 @@
+# MovieRecs Data Pipeline Configuration
+data_sources:
+  primary: "movielens"  # Primary data source: movielens, tmdb
+  backup: "local_fallback"  # Backup when primary fails
+  
+  # MovieLens 25M Dataset
+  movielens:
+    url: "https://files.grouplens.org/datasets/movielens/ml-25m.zip"
+    filename: "ml-25m.zip" 
+    # checksum: "md5:6b3e8d5c6a8f7d4c8e1a2b3c4d5e6f7g"  # Example checksum
+    attribution: "F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets: History and Context. ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4: 19:1–19:19."
+    license: "https://grouplens.org/datasets/movielens/"
+    
+  # TMDB Alternative (would require API key)
+  tmdb:
+    api_key_env: "TMDB_API_KEY"
+    base_url: "https://api.themoviedb.org/3"
+    attribution: "This product uses the TMDB API but is not endorsed or certified by TMDB."
+    license: "https://www.themoviedb.org/documentation/api/terms-of-use"
+    
+  # Local fallback dataset
+  local_fallback:
+    path: "data/raw/fallback_movies.json"
+    description: "Small sample dataset for testing"
+
+# Download and caching settings
+download:
+  cache_dir: "data/raw"
+  temp_dir: "data/temp" 
+  timeout_seconds: 300
+  max_retries: 3
+  retry_delay_seconds: 5
+  chunk_size: 8192
+  verify_checksums: true
+  
+# Processing configuration
+processing:
+  min_movies: 10000
+  max_movies: 50000
+  required_fields: ["title", "synopsis", "release_year"]
+  
+# Quality thresholds
+quality_thresholds:
+  completeness_min: 0.95
+  synopsis_min_length: 50
+  title_min_length: 1
+  valid_year_range: [1900, 2025]
+  
+# Bias detection settings
+bias_detection:
+  enable_demographic_analysis: true
+  enable_genre_analysis: true
+  enable_geographic_analysis: true
+  enable_temporal_analysis: true
+  report_format: "html"
+  min_sample_size: 100
+  
+# Logging configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "data/logs/pipeline.log"
+  
+# Version tracking
+versioning:
+  track_dataset_versions: true
+  metadata_file: "data/raw/dataset_metadata.json"
+  
+# Performance settings  
+performance:
+  max_memory_gb: 2
+  parallel_workers: 4
+  batch_size: 1000

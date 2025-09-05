@@ -1,0 +1,48 @@
+[
+  {
+    "movie_id": "bad_1",
+    "title": "",
+    "synopsis": "Too short",
+    "release_year": 2050,
+    "runtime_mins": -10,
+    "genres": [],
+    "ratings": {
+      "average": 15.0,
+      "count": -100
+    }
+  },
+  {
+    "movie_id": "bad_2",
+    "synopsis": "Missing title and other fields",
+    "release_year": "not_a_number",
+    "genres": "should_be_array",
+    "ratings": "not_an_object"
+  },
+  {
+    "title": "Missing movie_id",
+    "synopsis": "This movie is missing its unique identifier which is required for processing and validation.",
+    "release_year": 2000,
+    "genres": ["Drama"],
+    "ratings": {
+      "average": 7.0,
+      "count": 1000
+    }
+  },
+  {
+    "movie_id": "bad_3",
+    "title": "Invalid Characters $$$ ###",
+    "synopsis": null,
+    "release_year": 1800,
+    "runtime_mins": 1000,
+    "genres": ["Invalid Genre", "Another Invalid"],
+    "ratings": {
+      "average": "not_a_number",
+      "count": "also_not_a_number"
+    },
+    "metadata": {
+      "language": "invalid_language_code",
+      "country": "INVALID",
+      "budget": "not_a_number"
+    }
+  }
+]

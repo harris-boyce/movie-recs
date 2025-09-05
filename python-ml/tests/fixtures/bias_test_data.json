@@ -1,0 +1,73 @@
+[
+  {
+    "movie_id": "bias_1",
+    "title": "Male-Dominated Action Film",
+    "synopsis": "An action-packed thriller featuring an all-male cast in explosive combat scenarios with minimal female representation in the narrative structure.",
+    "release_year": 2020,
+    "runtime_mins": 120,
+    "genres": ["Action"],
+    "cast": [
+      {"name": "Actor 1", "role": "actor", "gender": "male", "ethnicity": "Caucasian"},
+      {"name": "Actor 2", "role": "actor", "gender": "male", "ethnicity": "Caucasian"},
+      {"name": "Actor 3", "role": "actor", "gender": "male", "ethnicity": "Caucasian"}
+    ],
+    "ratings": {"average": 8.0, "count": 10000},
+    "metadata": {"language": "en", "country": "US"}
+  },
+  {
+    "movie_id": "bias_2",
+    "title": "Another US Action Movie",
+    "synopsis": "Yet another American action film with similar themes and demographic representation patterns as many contemporary Hollywood productions.",
+    "release_year": 2021,
+    "runtime_mins": 115,
+    "genres": ["Action"],
+    "cast": [
+      {"name": "Actor 4", "role": "actor", "gender": "male", "ethnicity": "Caucasian"},
+      {"name": "Actor 5", "role": "actor", "gender": "male", "ethnicity": "Caucasian"}
+    ],
+    "ratings": {"average": 7.5, "count": 8000},
+    "metadata": {"language": "en", "country": "US"}
+  },
+  {
+    "movie_id": "bias_3",
+    "title": "Recent Hollywood Blockbuster",
+    "synopsis": "A contemporary American blockbuster that follows traditional Hollywood formulas with standard demographic representation and genre conventions.",
+    "release_year": 2022,
+    "runtime_mins": 125,
+    "genres": ["Action"],
+    "cast": [
+      {"name": "Actor 6", "role": "actor", "gender": "male", "ethnicity": "Caucasian"},
+      {"name": "Actor 7", "role": "actor", "gender": "male", "ethnicity": "Caucasian"}
+    ],
+    "ratings": {"average": 8.2, "count": 12000},
+    "metadata": {"language": "en", "country": "US"}
+  },
+  {
+    "movie_id": "bias_4",
+    "title": "Modern American Action",
+    "synopsis": "Another modern American action film that demonstrates the concentration of similar themes and demographics in contemporary cinema production.",
+    "release_year": 2023,
+    "runtime_mins": 130,
+    "genres": ["Action"],
+    "cast": [
+      {"name": "Actor 8", "role": "actor", "gender": "male", "ethnicity": "Caucasian"},
+      {"name": "Actor 9", "role": "actor", "gender": "male", "ethnicity": "Caucasian"}
+    ],
+    "ratings": {"average": 7.8, "count": 9500},
+    "metadata": {"language": "en", "country": "US"}
+  },
+  {
+    "movie_id": "bias_5",
+    "title": "Latest Action Hit",
+    "synopsis": "The most recent addition to the action genre featuring similar casting choices and production values typical of mainstream American cinema.",
+    "release_year": 2024,
+    "runtime_mins": 118,
+    "genres": ["Action"],
+    "cast": [
+      {"name": "Actor 10", "role": "actor", "gender": "male", "ethnicity": "Caucasian"},
+      {"name": "Actor 11", "role": "actor", "gender": "male", "ethnicity": "Caucasian"}
+    ],
+    "ratings": {"average": 8.1, "count": 11000},
+    "metadata": {"language": "en", "country": "US"}
+  }
+]
