@@ -324,7 +324,7 @@ class DataPipeline:
     def _load_existing_data(self) -> List[Dict[str, Any]]:
         """Load existing processed data."""
         # Try to find existing processed data
-        data_files = ["data/processed/movies.json", "data/raw/fallback_movies.json"]
+        data_files = ["data/processed/movies.json", "data/raw/fallback_movies.json", "data/raw/test_movies.json"]
 
         for file_path in data_files:
             if Path(file_path).exists():
