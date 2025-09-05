@@ -82,7 +82,8 @@ jobs:
     - name: Run tests with coverage
       working-directory: python-ml
       env:
-        MOVIERECS_MAX_MOVIES: '10'
+        MOVIERECS_MAX_MOVIES: '1000'
+        MOVIERECS_MIN_MOVIES: '5'
         PYTHONPATH: 'src'
       run: |
         python -m pytest tests/ \
@@ -131,7 +132,8 @@ jobs:
     - name: Test pipeline with sample data
       working-directory: python-ml
       env:
-        MOVIERECS_MAX_MOVIES: '5'
+        MOVIERECS_MAX_MOVIES: '1000'
+        MOVIERECS_MIN_MOVIES: '1'
         MOVIERECS_OUTPUT_DIR: 'data'
         PYTHONPATH: 'src'
       run: |
