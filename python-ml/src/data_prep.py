@@ -86,9 +86,12 @@ class PipelineConfig:
             output_dir = os.environ["MOVIERECS_OUTPUT_DIR"]
             config["download"]["cache_dir"] = f"{output_dir}/raw"
 
-        # Override max movies for testing
-        if "MOVIERECS_MAX_MOVIES" in os.environ:
-            config["processing"]["max_movies"] = int(os.environ["MOVIERECS_MAX_MOVIES"])
+        # Override movies count for testing (only if processing section exists)
+        if "processing" in config:
+            if "MOVIERECS_MIN_MOVIES" in os.environ:
+                config["processing"]["min_movies"] = int(os.environ["MOVIERECS_MIN_MOVIES"])
+            if "MOVIERECS_MAX_MOVIES" in os.environ:
+                config["processing"]["max_movies"] = int(os.environ["MOVIERECS_MAX_MOVIES"])
 
         return config
 
