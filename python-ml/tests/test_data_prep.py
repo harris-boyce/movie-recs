@@ -475,7 +475,10 @@ class TestPipelineIntegration(unittest.TestCase):
                     "local_fallback": {"path": str(temp_path / "movies.json")},
                 },
                 "download": {"cache_dir": str(temp_path / "cache")},
-                "processing": {"min_movies": 1, "max_movies": 10},  # Adjusted for data loading issue - see GitHub issue #6
+                "processing": {
+                    "min_movies": 1,
+                    "max_movies": 10,
+                },  # Adjusted for data loading issue - see GitHub issue #6
                 "quality_thresholds": {"completeness_min": 0.8},
                 "feature_engineering": {
                     "use_genre_encoding": True,
