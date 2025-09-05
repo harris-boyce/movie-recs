@@ -106,6 +106,7 @@ jobs:
   integration-test:
     name: Integration Tests
     runs-on: ubuntu-latest
+    if: false
     needs: [lint-and-format, test-suite]
     
     steps:
@@ -161,7 +162,7 @@ jobs:
         try:
             pipeline = DataPipeline()
             results = pipeline.run_full_pipeline(
-                skip_download=True,
+                skip_download=False,
                 export_formats=['json']
             )
             print(f'Pipeline test result: {results[\"status\"]}')

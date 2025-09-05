@@ -7,7 +7,7 @@ data_sources:
   movielens:
     url: "https://files.grouplens.org/datasets/movielens/ml-25m.zip"
     filename: "ml-25m.zip" 
-    checksum: "md5:6b3e8d5c6a8f7d4c8e1a2b3c4d5e6f7g"  # Example checksum
+    # checksum: "md5:6b3e8d5c6a8f7d4c8e1a2b3c4d5e6f7g"  # Example checksum
     attribution: "F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets: History and Context. ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4: 19:1–19:19."
     license: "https://grouplens.org/datasets/movielens/"
     

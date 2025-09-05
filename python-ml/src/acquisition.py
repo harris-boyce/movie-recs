@@ -134,7 +134,7 @@ class DatasetDownloader:
             # All sources failed
             raise DataAcquisitionError(f"Failed to download from all available sources")
 
-    def _download_from_source(self, source_name: str, force_refresh: bool) -> Path:
+    def _download_from_source(self, source_name: Optional[str], force_refresh: bool) -> Path:
         """Download from specific data source."""
         if source_name not in self.config["data_sources"]:
             raise DataAcquisitionError(f"Unknown data source: {source_name}")
