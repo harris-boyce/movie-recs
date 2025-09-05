@@ -128,7 +128,9 @@ class DataValidator:
             result.summary["field_completeness"] = self._calculate_field_completeness(valid_movies)
 
         # Overall validation status
-        completeness_rate = result.summary["valid_movies"] / result.summary["total_movies"] if result.summary["total_movies"] > 0 else 0
+        completeness_rate = (
+            result.summary["valid_movies"] / result.summary["total_movies"] if result.summary["total_movies"] > 0 else 0
+        )
         if completeness_rate < self.thresholds.completeness_min:
             result.add_error(
                 "dataset",
@@ -541,7 +543,7 @@ class DataValidator:
         for genre in Genre:
             genre_col = f'genre_{genre.value.lower().replace(" ", "_")}'
             if genre_col in df.columns:
-                genre_movies = df[df[genre_col] == True]
+                genre_movies = df[df[genre_col] is True]
                 if len(genre_movies) >= 10:  # Minimum sample size
                     genre_rating_analysis[genre.value] = {
                         "mean_rating": float(genre_movies["rating_average"].mean()),

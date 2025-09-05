@@ -38,11 +38,11 @@ class DatasetDownloader:
     def __init__(self, config_path: str = "configs/data_config.yaml"):
         """Initialize downloader with configuration."""
         self.config = self._load_config(config_path)
-        
+
         # Set up directories with defaults
         download_config = self.config.get("download", {})
         versioning_config = self.config.get("versioning", {})
-        
+
         self.cache_dir = Path(download_config.get("cache_dir", "data/cache"))
         self.temp_dir = Path(download_config.get("temp_dir", "data/temp"))
         self.metadata_file = Path(versioning_config.get("metadata_file", "data/metadata.json"))
@@ -64,29 +64,27 @@ class DatasetDownloader:
             # Return default configuration if file not found
             logger.warning(f"Configuration file not found: {config_path}, using defaults")
             return {
-                "download": {
-                    "cache_dir": "data/cache",
-                    "temp_dir": "data/temp"
-                },
-                "versioning": {
-                    "metadata_file": "data/metadata.json"
-                },
+                "download": {"cache_dir": "data/cache", "temp_dir": "data/temp"},
+                "versioning": {"metadata_file": "data/metadata.json"},
                 "logging": {
                     "level": "INFO",
                     "file": "data/logs/acquisition.log",
-                    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-                }
+                    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                },
             }
         except yaml.YAMLError as e:
             raise DataAcquisitionError(f"Error parsing configuration: {e}")
 
     def _setup_logging(self) -> None:
         """Setup logging configuration."""
-        log_config = self.config.get("logging", {
-            "level": "INFO",
-            "file": "data/logs/acquisition.log",
-            "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        })
+        log_config = self.config.get(
+            "logging",
+            {
+                "level": "INFO",
+                "file": "data/logs/acquisition.log",
+                "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            },
+        )
 
         # Create log directory if it doesn't exist
         log_file = Path(log_config.get("file", "data/logs/acquisition.log"))

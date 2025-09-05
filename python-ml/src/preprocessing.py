@@ -680,7 +680,7 @@ class FeatureEngineer:
 
 if __name__ == "__main__":
     # Example usage
-    from .schema import Genre, Movie, Ratings
+    from .schema import Ratings
 
     # Sample movies for testing
     sample_movies = [
