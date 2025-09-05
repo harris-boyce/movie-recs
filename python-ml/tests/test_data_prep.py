@@ -48,25 +48,44 @@ class TestPipelineConfig(unittest.TestCase):
         with open(config_file, "w") as f:
             yaml.dump(test_config, f)
 
-        config = PipelineConfig(str(config_file))
+        # Clear environment variables that might interfere
+        with patch.dict("os.environ", {}, clear=False):
+            # Remove specific env vars that would override config
+            import os
 
-        self.assertEqual(config.config["data_sources"]["primary"], "test_source")
-        self.assertEqual(config.config["processing"]["min_movies"], 50)
+            for key in list(os.environ.keys()):
+                if key.startswith("MOVIERECS_"):
+                    del os.environ[key]
+
+            config = PipelineConfig(str(config_file))
+
+            self.assertEqual(config.config["data_sources"]["primary"], "test_source")
+            self.assertEqual(config.config["processing"]["min_movies"], 50)
 
     def test_environment_overrides(self):
         """Test environment variable overrides."""
+        import importlib
+        import sys
+
         with patch.dict(
             "os.environ",
             {
                 "MOVIERECS_DATA_SOURCE": "env_source",
                 "MOVIERECS_OUTPUT_DIR": "/tmp/test",
+                "MOVIERECS_MIN_MOVIES": "50",
                 "MOVIERECS_MAX_MOVIES": "1000",
             },
         ):
+            # Reload the module to pick up environment changes
+            if "src.data_prep" in sys.modules:
+                importlib.reload(sys.modules["src.data_prep"])
+            from src.data_prep import PipelineConfig
+
             config = PipelineConfig()
 
             self.assertEqual(config.config["data_sources"]["primary"], "env_source")
             self.assertEqual(config.config["download"]["cache_dir"], "/tmp/test/raw")
+            self.assertEqual(config.config["processing"]["min_movies"], 50)
             self.assertEqual(config.config["processing"]["max_movies"], 1000)
 
     def test_config_validation(self):
@@ -249,7 +268,7 @@ class TestDataPipeline(unittest.TestCase):
         validation_result.warning_count = 1
         validation_result.summary = {"completeness_rate": 0.95}
 
-        valid_movies = [Mock(), Mock()]
+        valid_movies = [Mock() for _ in range(6)]  # Exceed min_movies requirement
         mock_validator_instance.validate_dataset.return_value = (
             validation_result,
             valid_movies,
@@ -312,13 +331,21 @@ class TestDataPipeline(unittest.TestCase):
 
     def test_pipeline_with_skip_download(self):
         """Test pipeline execution with skip download."""
-        pipeline = DataPipeline(str(self.config_file))
+        # Clear environment variables that might override test config
+        with patch.dict("os.environ", {}, clear=False):
+            import os
 
-        # Test will use existing test data
-        results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json"])
+            for key in list(os.environ.keys()):
+                if key.startswith("MOVIERECS_"):
+                    del os.environ[key]
 
-        self.assertEqual(results["status"], "success")
-        self.assertGreater(results["summary"]["valid_movies"], 0)
+            pipeline = DataPipeline(str(self.config_file))
+
+            # Test will use existing test data
+            results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json"])
+
+            self.assertEqual(results["status"], "success")
+            self.assertGreater(results["summary"]["valid_movies"], 0)
 
     def test_pipeline_failure_handling(self):
         """Test pipeline failure handling."""
@@ -425,6 +452,18 @@ class TestPipelineIntegration(unittest.TestCase):
 
     def test_end_to_end_pipeline(self):
         """Test complete end-to-end pipeline execution."""
+        # Clear environment variables that might interfere
+        with patch.dict("os.environ", {}, clear=False):
+            import os
+
+            for key in list(os.environ.keys()):
+                if key.startswith("MOVIERECS_"):
+                    del os.environ[key]
+
+            self._run_integration_test()
+
+    def _run_integration_test(self):
+        """Helper method to run integration test."""
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
 
@@ -490,24 +529,24 @@ class TestPipelineIntegration(unittest.TestCase):
             with open(temp_path / "movies.json", "w") as f:
                 json.dump(movies, f)
 
-            # Run complete pipeline
-            pipeline = DataPipeline(str(config_file))
-            results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json"])  # Use existing data
+        # Run complete pipeline
+        pipeline = DataPipeline(str(config_file))
+        results = pipeline.run_full_pipeline(skip_download=True, export_formats=["json"])  # Use existing data
 
-            # Verify results
-            self.assertEqual(results["status"], "success")
+        # Verify results
+        self.assertEqual(results["status"], "success")
 
-            # Check that files were created
-            processed_dir = temp_path / "cache" / "processed"
-            if processed_dir.exists():
-                json_files = list(processed_dir.glob("**/*.json"))
-                self.assertGreater(len(json_files), 0)
+        # Check that files were created
+        processed_dir = temp_path / "cache" / "processed"
+        if processed_dir.exists():
+            json_files = list(processed_dir.glob("**/*.json"))
+            self.assertGreater(len(json_files), 0)
 
-            # Check feature engineering results
-            feature_info = results["feature_info"]
-            self.assertGreater(feature_info["feature_count"], 0)
-            self.assertGreater(feature_info["train_features"][0], 0)  # Train samples > 0
-            self.assertGreater(feature_info["test_features"][0], 0)  # Test samples > 0
+        # Check feature engineering results
+        feature_info = results["feature_info"]
+        self.assertGreater(feature_info["feature_count"], 0)
+        self.assertGreater(feature_info["train_features"][0], 0)  # Train samples > 0
+        self.assertGreater(feature_info["test_features"][0], 0)  # Test samples > 0
 
 
 if __name__ == "__main__":
