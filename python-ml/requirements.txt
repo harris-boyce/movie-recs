@@ -25,6 +25,8 @@ jupyterlab>=3.5.0
 pytest>=7.0.0
 black>=22.0.0
 flake8>=5.0.0
+flake8-pyproject>=1.2.0
+isort>=5.0.0
 pre-commit>=2.20.0
 
 # Additional utilities
