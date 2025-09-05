@@ -543,7 +543,7 @@ class DataValidator:
         for genre in Genre:
             genre_col = f'genre_{genre.value.lower().replace(" ", "_")}'
             if genre_col in df.columns:
-                genre_movies = df[df[genre_col] is True]
+                genre_movies = df[df[genre_col] == True]  # noqa: E712 pandas requires == True
                 if len(genre_movies) >= 10:  # Minimum sample size
                     genre_rating_analysis[genre.value] = {
                         "mean_rating": float(genre_movies["rating_average"].mean()),
