@@ -12,8 +12,8 @@ Tests cover:
 import json
 import time
 import unittest
-from unittest.mock import MagicMock, Mock, patch
 from datetime import datetime, timedelta
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 import requests

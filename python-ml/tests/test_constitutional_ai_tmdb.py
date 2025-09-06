@@ -9,8 +9,8 @@ Tests cover:
 """
 
 import unittest
-from unittest.mock import Mock, patch
 from collections import defaultdict
+from unittest.mock import Mock, patch
 
 from src.tmdb_client import EnhancedTMDBClient
 
