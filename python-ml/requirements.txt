@@ -23,6 +23,7 @@ pyarrow>=9.0.0
 jupyter>=1.0.0
 jupyterlab>=3.5.0
 pytest>=7.0.0
+pytest-asyncio>=0.21.0
 black>=22.0.0
 flake8>=5.0.0
 flake8-pyproject>=1.2.0
@@ -46,3 +47,6 @@ scikit-learn>=1.1.0
 
 # System monitoring
 psutil>=5.9.0
+
+# TMDB API integration
+tmdbsimple>=2.9.0
