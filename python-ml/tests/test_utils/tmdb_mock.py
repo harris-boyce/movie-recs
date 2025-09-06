@@ -9,7 +9,7 @@ import json
 import os
 from pathlib import Path
 from typing import Any, Dict, Optional
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 # Load test fixtures
 FIXTURES_PATH = Path(__file__).parent.parent / 'fixtures' / 'tmdb_responses.json'
@@ -410,7 +410,6 @@ def patch_requests_for_tmdb(test_instance, mock_responses: Optional[Dict] = None
                 mock_session = MockTMDBSession()
                 if mock_responses:
                     # Update mock responses if provided
-                    global MOCK_RESPONSES
                     MOCK_RESPONSES.update(mock_responses)
                 
                 mock_session_class.return_value = mock_session

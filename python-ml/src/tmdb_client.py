@@ -746,7 +746,7 @@ class EnhancedTMDBClient:
 
 if __name__ == "__main__":
     # Example usage
-    import os
+
     from dotenv import load_dotenv
 
     load_dotenv()

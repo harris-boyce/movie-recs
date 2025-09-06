@@ -77,7 +77,7 @@ class TestTMDBIntegration(unittest.TestCase):
         movie_id = 550  # Fight Club
         
         result = self.client.get_movie_details(
-            movie_id, 
+            movie_id,
             append_to_response=['credits', 'videos']
         )
         
@@ -302,7 +302,7 @@ class TestTMDBIntegration(unittest.TestCase):
         movie = self.client.get_movie_details(
             movie_id,
             append_to_response=[
-                'credits', 'videos', 'images', 'keywords', 
+                'credits', 'videos', 'images', 'keywords',
                 'reviews', 'similar', 'translations'
             ]
         )

@@ -79,7 +79,7 @@ class DataValidator:
 
         # Setup matplotlib for headless operation
         plt.switch_backend("Agg")
-        
+
         # TMDB-specific configuration
         self.tmdb_config = self.config.get("tmdb_validation", {})
 
@@ -208,52 +208,34 @@ class DataValidator:
 
     def validate_tmdb_specific_quality(self, movie: Movie, result: ValidationResult) -> None:
         """Perform TMDB-specific quality checks on individual movie."""
-        
+
         # Check TMDB ID presence and validity
         if movie.metadata and movie.metadata.tmdb_id:
             tmdb_id = movie.metadata.tmdb_id
             if not isinstance(tmdb_id, int) or tmdb_id <= 0:
-                result.add_error(
-                    movie.movie_id,
-                    "tmdb_id",
-                    f"Invalid TMDB ID: {tmdb_id}",
-                    tmdb_id
-                )
+                result.add_error(movie.movie_id, "tmdb_id", f"Invalid TMDB ID: {tmdb_id}", tmdb_id)
         else:
-            result.add_warning(
-                movie.movie_id,
-                "tmdb_id", 
-                "Missing TMDB ID - may indicate data quality issues",
-                None
-            )
-        
+            result.add_warning(movie.movie_id, "tmdb_id", "Missing TMDB ID - may indicate data quality issues", None)
+
         # Check IMDB ID format if present
         if movie.metadata and movie.metadata.imdb_id:
             imdb_id = movie.metadata.imdb_id
-            if not (isinstance(imdb_id, str) and imdb_id.startswith('tt') and len(imdb_id) >= 9):
-                result.add_warning(
-                    movie.movie_id,
-                    "imdb_id",
-                    f"Invalid IMDB ID format: {imdb_id}",
-                    imdb_id
-                )
-        
+            if not (isinstance(imdb_id, str) and imdb_id.startswith("tt") and len(imdb_id) >= 9):
+                result.add_warning(movie.movie_id, "imdb_id", f"Invalid IMDB ID format: {imdb_id}", imdb_id)
+
         # Check popularity score range (TMDB popularity scores are typically 0-1000+)
         if movie.metadata and movie.metadata.popularity:
             popularity = movie.metadata.popularity
             if popularity < 0 or popularity > 10000:  # Very liberal upper bound
                 result.add_warning(
-                    movie.movie_id,
-                    "popularity",
-                    f"Unusual TMDB popularity score: {popularity}",
-                    popularity
+                    movie.movie_id, "popularity", f"Unusual TMDB popularity score: {popularity}", popularity
                 )
-        
+
         # Check budget/revenue data quality
         if movie.metadata:
             budget = movie.metadata.budget
             revenue = movie.metadata.revenue
-            
+
             if budget and revenue:
                 # Check for unrealistic budget/revenue ratios
                 if budget > 0 and revenue > 0:
@@ -263,16 +245,16 @@ class DataValidator:
                             movie.movie_id,
                             "revenue_budget_ratio",
                             f"Unusually high revenue/budget ratio: {ratio:.1f}x",
-                            ratio
+                            ratio,
                         )
                     elif ratio < 0.01:  # Revenue less than 1% of budget seems unusual
                         result.add_warning(
                             movie.movie_id,
-                            "revenue_budget_ratio", 
+                            "revenue_budget_ratio",
                             f"Unusually low revenue/budget ratio: {ratio:.3f}x",
-                            ratio
+                            ratio,
                         )
-        
+
         # Check cast/crew data quality from TMDB
         if movie.cast:
             # Check for complete cast data
@@ -282,83 +264,83 @@ class DataValidator:
                     movie.movie_id,
                     "cast_completeness",
                     f"Incomplete cast data: {len(cast_with_names)}/{len(movie.cast)} have names",
-                    len(cast_with_names) / len(movie.cast)
+                    len(cast_with_names) / len(movie.cast),
                 )
-        
+
         # Check for TMDB-specific genre consistency
         if movie.genres:
             genre_names = [genre.value for genre in movie.genres]
             # Check for placeholder or invalid genres that might indicate API issues
-            invalid_genres = [g for g in genre_names if not g or g.lower() in ['unknown', 'other', 'none']]
+            invalid_genres = [g for g in genre_names if not g or g.lower() in ["unknown", "other", "none"]]
             if invalid_genres:
                 result.add_warning(
                     movie.movie_id,
                     "genre_quality",
                     f"Found placeholder/invalid genres: {invalid_genres}",
-                    invalid_genres
+                    invalid_genres,
                 )
-    
+
     def validate_tmdb_diversity_compliance(self, movies: List[Movie]) -> Dict[str, Any]:
         """
         Validate TMDB dataset for Constitutional AI diversity compliance.
-        
+
         Args:
             movies: List of validated movies from TMDB
-            
+
         Returns:
             Dictionary containing diversity compliance analysis
         """
         logger.info(f"Validating Constitutional AI diversity compliance for {len(movies)} TMDB movies")
-        
+
         compliance_report = {
             "total_movies": len(movies),
             "compliance_status": "PASS",
             "violations": [],
             "recommendations": [],
             "diversity_metrics": {},
-            "bias_indicators": {}
+            "bias_indicators": {},
         }
-        
+
         if not movies:
             compliance_report["compliance_status"] = "FAIL"
             compliance_report["violations"].append("No movies to validate")
             return compliance_report
-        
+
         # Extract diversity metrics
         countries = []
         languages = []
         genres = []
         decades = []
-        
+
         for movie in movies:
             # Country diversity
             if movie.metadata and movie.metadata.country:
                 countries.append(movie.metadata.country)
             else:
                 countries.append("Unknown")
-            
+
             # Language diversity
             if movie.metadata and movie.metadata.language:
                 languages.append(movie.metadata.language.value)
             else:
                 languages.append("unknown")
-            
+
             # Genre diversity
             for genre in movie.genres:
                 genres.append(genre.value)
-            
+
             # Temporal diversity
             decade = (movie.release_year // 10) * 10
             decades.append(decade)
-        
+
         # Calculate diversity statistics
         from collections import Counter
-        
+
         country_counts = Counter(countries)
         language_counts = Counter(languages)
         genre_counts = Counter(genres)
         decade_counts = Counter(decades)
-        
+
         # Store metrics
         compliance_report["diversity_metrics"] = {
             "unique_countries": len(country_counts),
@@ -368,66 +350,74 @@ class DataValidator:
             "country_distribution": dict(country_counts),
             "language_distribution": dict(language_counts),
             "genre_distribution": dict(genre_counts),
-            "decade_distribution": dict(decade_counts)
+            "decade_distribution": dict(decade_counts),
         }
-        
+
         # Check compliance thresholds
         total_movies = len(movies)
         thresholds = self.tmdb_config.get("diversity_thresholds", {})
-        
+
         # Geographic diversity compliance
         us_count = country_counts.get("US", 0)
         us_percentage = us_count / total_movies
         max_us_percentage = thresholds.get("max_us_percentage", 0.7)
-        
+
         if us_percentage > max_us_percentage:
-            compliance_report["violations"].append({
-                "type": "geographic_bias",
-                "message": f"US movies represent {us_percentage:.1%} of dataset (limit: {max_us_percentage:.1%})",
-                "severity": "HIGH" if us_percentage > 0.8 else "MEDIUM",
-                "value": us_percentage,
-                "threshold": max_us_percentage
-            })
-        
+            compliance_report["violations"].append(
+                {
+                    "type": "geographic_bias",
+                    "message": f"US movies represent {us_percentage:.1%} of dataset (limit: {max_us_percentage:.1%})",
+                    "severity": "HIGH" if us_percentage > 0.8 else "MEDIUM",
+                    "value": us_percentage,
+                    "threshold": max_us_percentage,
+                }
+            )
+
         # Language diversity compliance
         en_count = language_counts.get("en", 0)
         en_percentage = en_count / total_movies
         max_en_percentage = thresholds.get("max_english_percentage", 0.8)
-        
+
         if en_percentage > max_en_percentage:
-            compliance_report["violations"].append({
-                "type": "language_bias",
-                "message": f"English movies represent {en_percentage:.1%} of dataset (limit: {max_en_percentage:.1%})",
-                "severity": "MEDIUM",
-                "value": en_percentage,
-                "threshold": max_en_percentage
-            })
-        
+            compliance_report["violations"].append(
+                {
+                    "type": "language_bias",
+                    "message": f"English movies represent {en_percentage:.1%} of dataset (limit: {max_en_percentage:.1%})",
+                    "severity": "MEDIUM",
+                    "value": en_percentage,
+                    "threshold": max_en_percentage,
+                }
+            )
+
         # Genre diversity compliance
         min_genres = thresholds.get("min_unique_genres", 10)
         if len(genre_counts) < min_genres:
-            compliance_report["violations"].append({
-                "type": "genre_diversity",
-                "message": f"Only {len(genre_counts)} unique genres found (minimum: {min_genres})",
-                "severity": "HIGH",
-                "value": len(genre_counts),
-                "threshold": min_genres
-            })
-        
-        # Temporal diversity compliance  
+            compliance_report["violations"].append(
+                {
+                    "type": "genre_diversity",
+                    "message": f"Only {len(genre_counts)} unique genres found (minimum: {min_genres})",
+                    "severity": "HIGH",
+                    "value": len(genre_counts),
+                    "threshold": min_genres,
+                }
+            )
+
+        # Temporal diversity compliance
         modern_count = sum(count for decade, count in decade_counts.items() if decade >= 2000)
         modern_percentage = modern_count / total_movies
         max_modern_percentage = thresholds.get("max_modern_percentage", 0.75)
-        
+
         if modern_percentage > max_modern_percentage:
-            compliance_report["violations"].append({
-                "type": "temporal_bias", 
-                "message": f"Modern movies (2000+) represent {modern_percentage:.1%} of dataset (limit: {max_modern_percentage:.1%})",
-                "severity": "MEDIUM",
-                "value": modern_percentage,
-                "threshold": max_modern_percentage
-            })
-        
+            compliance_report["violations"].append(
+                {
+                    "type": "temporal_bias",
+                    "message": f"Modern movies (2000+) represent {modern_percentage:.1%} of dataset (limit: {max_modern_percentage:.1%})",
+                    "severity": "MEDIUM",
+                    "value": modern_percentage,
+                    "threshold": max_modern_percentage,
+                }
+            )
+
         # Calculate bias indicators
         compliance_report["bias_indicators"] = {
             "us_bias": us_percentage,
@@ -435,22 +425,20 @@ class DataValidator:
             "modern_bias": modern_percentage,
             "genre_concentration": max(genre_counts.values()) / sum(genre_counts.values()) if genre_counts else 0,
             "geographic_concentration": max(country_counts.values()) / total_movies,
-            "language_concentration": max(language_counts.values()) / total_movies
+            "language_concentration": max(language_counts.values()) / total_movies,
         }
-        
+
         # Generate recommendations
         if compliance_report["violations"]:
             compliance_report["compliance_status"] = "FAIL"
-            
+
             for violation in compliance_report["violations"]:
                 if violation["type"] == "geographic_bias":
                     compliance_report["recommendations"].append(
                         "Increase representation of international films (non-US)"
                     )
                 elif violation["type"] == "language_bias":
-                    compliance_report["recommendations"].append(
-                        "Include more non-English language films"
-                    )
+                    compliance_report["recommendations"].append("Include more non-English language films")
                 elif violation["type"] == "genre_diversity":
                     compliance_report["recommendations"].append(
                         "Add more diverse genres including documentaries, foreign films, and niche categories"
@@ -460,33 +448,31 @@ class DataValidator:
                         "Include more classic films (pre-2000) for temporal balance"
                     )
         else:
-            compliance_report["recommendations"].append(
-                "Dataset meets Constitutional AI diversity requirements"
-            )
-        
+            compliance_report["recommendations"].append("Dataset meets Constitutional AI diversity requirements")
+
         # Log compliance status
         logger.info(f"TMDB Diversity Compliance: {compliance_report['compliance_status']}")
         if compliance_report["violations"]:
             logger.warning(f"Found {len(compliance_report['violations'])} diversity violations")
             for violation in compliance_report["violations"]:
                 logger.warning(f"  {violation['type']}: {violation['message']}")
-        
+
         return compliance_report
-    
+
     def generate_tmdb_quality_report(
         self,
         validation_result: ValidationResult,
         diversity_compliance: Dict[str, Any],
         movies: List[Movie],
-        output_path: str = "data/reports/tmdb_quality_report.html"
+        output_path: str = "data/reports/tmdb_quality_report.html",
     ) -> None:
         """Generate TMDB-specific quality report with Constitutional AI compliance."""
-        
+
         logger.info(f"Generating TMDB quality report: {output_path}")
-        
+
         # Create output directory
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-        
+
         # Enhanced HTML template for TMDB
         html_template = """
 <!DOCTYPE html>
@@ -526,7 +512,7 @@ class DataValidator:
             <strong>Report Generated:</strong> {{ report_date }}<br>
             <strong>Dataset Size:</strong> {{ total_movies }} movies<br>
             <strong>Data Source:</strong> TMDB API via Enhanced Client<br>
-            <strong>Constitutional AI Compliance:</strong> 
+            <strong>Constitutional AI Compliance:</strong>
             <span class="compliance-{{ 'pass' if compliance_status == 'PASS' else 'fail' }}">
                 {{ compliance_status }}
             </span>
@@ -609,7 +595,7 @@ class DataValidator:
 </body>
 </html>
         """
-        
+
         # Prepare template data
         template_data = {
             "report_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -625,12 +611,13 @@ class DataValidator:
             "unique_genres": diversity_compliance["diversity_metrics"]["unique_genres"],
             "unique_decades": diversity_compliance["diversity_metrics"]["unique_decades"],
             "recommendations": diversity_compliance["recommendations"],
-            "report_id": f"tmdb_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            "report_id": f"tmdb_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
         }
-        
+
         # Render template
         if JINJA2_AVAILABLE:
             from jinja2 import Template
+
             template = Template(html_template)
             html_content = template.render(**template_data)
         else:
@@ -638,11 +625,11 @@ class DataValidator:
             html_content = html_template
             for key, value in template_data.items():
                 html_content = html_content.replace(f"{{{{ {key} }}}}", str(value))
-        
+
         # Write report
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(html_content)
-        
+
         logger.info(f"TMDB quality report generated: {output_path}")
 
     def _calculate_field_completeness(self, movies: List[Movie]) -> Dict[str, float]:
