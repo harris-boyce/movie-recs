@@ -1,0 +1,469 @@
+{
+  "valid_movies": [
+    {
+      "movie_id": "550",
+      "title": "Fight Club",
+      "original_title": "Fight Club",
+      "synopsis": "An insomniac office worker and a devil-may-care soapmaker form an underground fight club that evolves into something much, much more. This dark psychological thriller explores themes of consumerism, masculinity, and identity in modern society through visceral storytelling and complex character development.",
+      "release_year": 1999,
+      "release_date": "1999-10-15",
+      "genres": ["Drama", "Thriller"],
+      "cast": [
+        {
+          "name": "Brad Pitt",
+          "character": "Tyler Durden",
+          "order": 0,
+          "birth_year": 1963,
+          "gender": "male",
+          "tmdb_person_id": 287,
+          "popularity": 25.5
+        },
+        {
+          "name": "Edward Norton",
+          "character": "The Narrator",
+          "order": 1,
+          "birth_year": 1969,
+          "gender": "male",
+          "tmdb_person_id": 819,
+          "popularity": 15.8
+        },
+        {
+          "name": "Helena Bonham Carter",
+          "character": "Marla Singer",
+          "order": 2,
+          "birth_year": 1966,
+          "gender": "female",
+          "tmdb_person_id": 853,
+          "popularity": 12.3
+        }
+      ],
+      "crew": [
+        {
+          "name": "David Fincher",
+          "job": "Director",
+          "department": "Directing",
+          "birth_year": 1962,
+          "gender": "male",
+          "tmdb_person_id": 7467,
+          "popularity": 18.5
+        },
+        {
+          "name": "Chuck Palahniuk",
+          "job": "Writer",
+          "department": "Writing",
+          "birth_year": 1962,
+          "gender": "male",
+          "tmdb_person_id": 5574,
+          "popularity": 5.2
+        },
+        {
+          "name": "Art Linson",
+          "job": "Producer",
+          "department": "Production",
+          "birth_year": 1942,
+          "gender": "male",
+          "tmdb_person_id": 488,
+          "popularity": 2.1
+        }
+      ],
+      "ratings": {
+        "average": 8.4,
+        "count": 26000,
+        "tmdb_rating": 8.4,
+        "tmdb_count": 26000,
+        "imdb_rating": 8.8,
+        "imdb_count": 2000000
+      },
+      "metadata": {
+        "tmdb_id": 550,
+        "imdb_id": "tt0137523",
+        "original_language": "en",
+        "origin_country": "US",
+        "budget": 63000000,
+        "revenue": 100853753,
+        "runtime": 139,
+        "production_companies": ["20th Century Fox", "Regency Enterprises", "Fox 2000 Pictures"],
+        "production_countries": ["US"],
+        "spoken_languages": ["en"],
+        "content_rating": "R",
+        "popularity": 61.4,
+        "vote_average": 8.4,
+        "vote_count": 26000
+      }
+    },
+    {
+      "movie_id": "346",
+      "title": "Seven Samurai",
+      "original_title": "七人の侍",
+      "synopsis": "A samurai answers a village's request for protection after he falls on hard times. The town needs protection from bandits, so the samurai gathers six others to help him teach the people how to defend themselves, and the villagers provide the soldiers with food. This epic tale explores honor, sacrifice, and the bonds between warriors and those they protect.",
+      "release_year": 1954,
+      "release_date": "1954-04-26",
+      "genres": ["Action", "Drama", "Adventure"],
+      "cast": [
+        {
+          "name": "Toshiro Mifune",
+          "character": "Kikuchiyo",
+          "order": 0,
+          "birth_year": 1920,
+          "gender": "male",
+          "nationality": "Japanese",
+          "tmdb_person_id": 11064,
+          "popularity": 8.9
+        },
+        {
+          "name": "Takashi Shimura",
+          "character": "Kambei Shimada",
+          "order": 1,
+          "birth_year": 1905,
+          "gender": "male",
+          "nationality": "Japanese",
+          "tmdb_person_id": 11063,
+          "popularity": 6.7
+        }
+      ],
+      "crew": [
+        {
+          "name": "Akira Kurosawa",
+          "job": "Director",
+          "department": "Directing",
+          "birth_year": 1910,
+          "gender": "male",
+          "nationality": "Japanese",
+          "tmdb_person_id": 5026,
+          "popularity": 15.3
+        }
+      ],
+      "ratings": {
+        "average": 8.6,
+        "count": 5000,
+        "tmdb_rating": 8.6,
+        "tmdb_count": 5000,
+        "imdb_rating": 9.0,
+        "imdb_count": 350000
+      },
+      "metadata": {
+        "tmdb_id": 346,
+        "imdb_id": "tt0047478",
+        "original_language": "ja",
+        "origin_country": "JP",
+        "runtime": 207,
+        "production_companies": ["Toho Company"],
+        "production_countries": ["JP"],
+        "spoken_languages": ["ja"],
+        "popularity": 20.1,
+        "vote_average": 8.6,
+        "vote_count": 5000
+      }
+    },
+    {
+      "movie_id": "238",
+      "title": "The Godfather",
+      "synopsis": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son. This masterpiece of cinema explores power, family, loyalty, and the American dream through the lens of the Italian-American mafia in post-war New York.",
+      "release_year": 1972,
+      "release_date": "1972-03-24",
+      "genres": ["Drama", "Crime"],
+      "cast": [
+        {
+          "name": "Marlon Brando",
+          "character": "Don Vito Corleone",
+          "order": 0,
+          "birth_year": 1924,
+          "gender": "male",
+          "ethnicity": "German-Irish-Dutch",
+          "tmdb_person_id": 3084,
+          "popularity": 15.2
+        },
+        {
+          "name": "Al Pacino",
+          "character": "Michael Corleone",
+          "order": 1,
+          "birth_year": 1940,
+          "gender": "male",
+          "ethnicity": "Italian-American",
+          "tmdb_person_id": 1158,
+          "popularity": 20.8
+        }
+      ],
+      "crew": [
+        {
+          "name": "Francis Ford Coppola",
+          "job": "Director",
+          "department": "Directing",
+          "birth_year": 1939,
+          "gender": "male",
+          "ethnicity": "Italian-American",
+          "tmdb_person_id": 1776,
+          "popularity": 12.5
+        }
+      ],
+      "ratings": {
+        "average": 8.7,
+        "count": 18000,
+        "imdb_rating": 9.2,
+        "imdb_count": 1800000
+      },
+      "metadata": {
+        "tmdb_id": 238,
+        "imdb_id": "tt0068646",
+        "original_language": "en",
+        "origin_country": "US",
+        "budget": 6000000,
+        "revenue": 287000000,
+        "runtime": 175,
+        "production_companies": ["Paramount Pictures", "Alfran Productions"],
+        "content_rating": "R"
+      }
+    },
+    {
+      "movie_id": "19404",
+      "title": "Dilwale Dulhania Le Jayenge",
+      "synopsis": "Raj and Simran meet during a trip across Europe and fall in love, but Simran's father has already arranged her marriage. This Bollywood romance became a cultural phenomenon and redefined Indian cinema's approach to love stories, tradition, and family values.",
+      "release_year": 1995,
+      "release_date": "1995-10-20",
+      "genres": ["Drama", "Romance"],
+      "cast": [
+        {
+          "name": "Shah Rukh Khan",
+          "character": "Raj Malhotra",
+          "order": 0,
+          "birth_year": 1965,
+          "gender": "male",
+          "nationality": "Indian",
+          "ethnicity": "Indian",
+          "tmdb_person_id": 5576,
+          "popularity": 28.5
+        },
+        {
+          "name": "Kajol",
+          "character": "Simran Singh",
+          "order": 1,
+          "birth_year": 1974,
+          "gender": "female",
+          "nationality": "Indian",
+          "ethnicity": "Indian",
+          "tmdb_person_id": 5573,
+          "popularity": 18.3
+        }
+      ],
+      "crew": [
+        {
+          "name": "Aditya Chopra",
+          "job": "Director",
+          "department": "Directing",
+          "birth_year": 1971,
+          "gender": "male",
+          "nationality": "Indian",
+          "tmdb_person_id": 5572,
+          "popularity": 8.1
+        }
+      ],
+      "ratings": {
+        "average": 8.1,
+        "count": 4000,
+        "imdb_rating": 8.1,
+        "imdb_count": 70000
+      },
+      "metadata": {
+        "tmdb_id": 19404,
+        "imdb_id": "tt0112870",
+        "original_language": "hi",
+        "origin_country": "IN",
+        "runtime": 189,
+        "production_companies": ["Yash Raj Films"],
+        "production_countries": ["IN"],
+        "spoken_languages": ["hi", "en"],
+        "popularity": 15.2
+      }
+    },
+    {
+      "movie_id": "129",
+      "title": "Spirited Away",
+      "original_title": "千と千尋の神隠し",
+      "synopsis": "A young girl becomes trapped in a strange new world of spirits and must find a way to free herself and her parents. This Studio Ghibli masterpiece combines Japanese folklore with universal themes of growing up, environmental consciousness, and finding inner strength.",
+      "release_year": 2001,
+      "release_date": "2001-07-20",
+      "genres": ["Animation", "Family", "Fantasy"],
+      "cast": [
+        {
+          "name": "Rumi Hiiragi",
+          "character": "Chihiro (voice)",
+          "order": 0,
+          "birth_year": 1987,
+          "gender": "female",
+          "nationality": "Japanese",
+          "tmdb_person_id": 17401,
+          "popularity": 4.2
+        }
+      ],
+      "crew": [
+        {
+          "name": "Hayao Miyazaki",
+          "job": "Director",
+          "department": "Directing",
+          "birth_year": 1941,
+          "gender": "male",
+          "nationality": "Japanese",
+          "tmdb_person_id": 608,
+          "popularity": 12.8
+        }
+      ],
+      "ratings": {
+        "average": 8.5,
+        "count": 14000,
+        "imdb_rating": 9.3,
+        "imdb_count": 750000
+      },
+      "metadata": {
+        "tmdb_id": 129,
+        "imdb_id": "tt0245429",
+        "original_language": "ja",
+        "origin_country": "JP",
+        "budget": 19000000,
+        "revenue": 395802070,
+        "runtime": 125,
+        "production_companies": ["Studio Ghibli"],
+        "production_countries": ["JP"],
+        "spoken_languages": ["ja"],
+        "popularity": 65.3
+      }
+    }
+  ],
+  "diverse_dataset": [
+    {
+      "movie_id": "amélie",
+      "title": "Amélie",
+      "synopsis": "A shy waitress decides to help those around her and, along the way, discovers love. This whimsical French romance captures the magic of Paris while exploring themes of loneliness, human connection, and finding joy in small moments.",
+      "release_year": 2001,
+      "genres": ["Romance", "Comedy"],
+      "metadata": {
+        "original_language": "fr",
+        "origin_country": "FR",
+        "runtime": 122
+      },
+      "ratings": {"average": 8.3, "count": 15000}
+    },
+    {
+      "movie_id": "parasite",
+      "title": "Parasite",
+      "original_title": "기생충",
+      "synopsis": "A poor family infiltrates a wealthy household by posing as unrelated, highly qualified individuals. This Oscar-winning thriller examines class inequality and social dynamics in contemporary South Korea with masterful suspense and dark humor.",
+      "release_year": 2019,
+      "genres": ["Thriller", "Drama", "Comedy"],
+      "metadata": {
+        "original_language": "ko",
+        "origin_country": "KR",
+        "runtime": 132
+      },
+      "ratings": {"average": 8.6, "count": 25000}
+    },
+    {
+      "movie_id": "city_of_god",
+      "title": "City of God",
+      "original_title": "Cidade de Deus",
+      "synopsis": "Two boys growing up in a violent neighborhood of Rio de Janeiro take different paths: one becomes a photographer, the other a drug dealer. This Brazilian crime drama offers a raw, unflinching look at poverty, violence, and survival.",
+      "release_year": 2002,
+      "genres": ["Crime", "Drama"],
+      "metadata": {
+        "original_language": "pt",
+        "origin_country": "BR",
+        "runtime": 130
+      },
+      "ratings": {"average": 8.6, "count": 12000}
+    },
+    {
+      "movie_id": "bicycle_thieves",
+      "title": "Bicycle Thieves",
+      "original_title": "Ladri di biciclette", 
+      "synopsis": "A man and his son search for a stolen bicycle without which he will lose his job. This Italian neorealist masterpiece explores post-war poverty, dignity, and the relationship between father and son with profound humanity.",
+      "release_year": 1948,
+      "genres": ["Drama"],
+      "metadata": {
+        "original_language": "it",
+        "origin_country": "IT",
+        "runtime": 93
+      },
+      "ratings": {"average": 8.3, "count": 8000}
+    },
+    {
+      "movie_id": "8_half",
+      "title": "8½",
+      "synopsis": "A harried movie director retreats into his memories and fantasies. Fellini's autobiographical masterpiece blends reality and imagination in a meditation on creativity, artistic block, and the filmmaker's relationship with his craft.",
+      "release_year": 1963,
+      "genres": ["Drama"],
+      "metadata": {
+        "original_language": "it", 
+        "origin_country": "IT",
+        "runtime": 138
+      },
+      "ratings": {"average": 8.0, "count": 6000}
+    },
+    {
+      "movie_id": "crouching_tiger",
+      "title": "Crouching Tiger, Hidden Dragon",
+      "synopsis": "A young Chinese warrior steals a sword from a famed swordsman and then escapes into a world of romantic adventure with a mysterious man in the frontier of the nation. This martial arts epic elevated the wuxia genre with poetic storytelling and breathtaking action.",
+      "release_year": 2000,
+      "genres": ["Action", "Adventure", "Drama"],
+      "metadata": {
+        "original_language": "zh",
+        "origin_country": "CN",
+        "runtime": 120
+      },
+      "ratings": {"average": 7.8, "count": 18000}
+    },
+    {
+      "movie_id": "amour",
+      "title": "Amour",
+      "synopsis": "Georges and Anne are in their eighties. They are cultivated, retired music teachers. Their daughter, who is also a musician, lives abroad with her family. As Anne gradually loses her faculties, their love is put to the ultimate test.",
+      "release_year": 2012,
+      "genres": ["Drama"],
+      "metadata": {
+        "original_language": "fr",
+        "origin_country": "AT",
+        "runtime": 127
+      },
+      "ratings": {"average": 7.9, "count": 9000}
+    },
+    {
+      "movie_id": "shoplifters",
+      "title": "Shoplifters",
+      "original_title": "万引き家族",
+      "synopsis": "A family of small-time crooks take in a child they find on the street. This Palme d'Or winner explores themes of family, poverty, and what it means to belong through the story of society's forgotten people.",
+      "release_year": 2018,
+      "genres": ["Drama"],
+      "metadata": {
+        "original_language": "ja",
+        "origin_country": "JP",
+        "runtime": 121
+      },
+      "ratings": {"average": 8.0, "count": 7000}
+    },
+    {
+      "movie_id": "pan_labyrinth",
+      "title": "Pan's Labyrinth",
+      "original_title": "El laberinto del fauno",
+      "synopsis": "In 1944 Spain, a bookish young stepdaughter of a sadistic army officer escapes into an eerie but captivating fantasy world. Guillermo del Toro's dark fairy tale blends historical drama with magical realism.",
+      "release_year": 2006,
+      "genres": ["Fantasy", "Drama", "War"],
+      "metadata": {
+        "original_language": "es",
+        "origin_country": "ES", 
+        "runtime": 118
+      },
+      "ratings": {"average": 8.2, "count": 20000}
+    },
+    {
+      "movie_id": "the_hunt",
+      "title": "The Hunt",
+      "original_title": "Jagten",
+      "synopsis": "A teacher lives a lonely life, all the while struggling over his son's custody. His life slowly gets better as he finds love and receives good news from his son, but his new luck is about to be brutally shattered by an innocent little lie.",
+      "release_year": 2012,
+      "genres": ["Drama"],
+      "metadata": {
+        "original_language": "da",
+        "origin_country": "DK",
+        "runtime": 115
+      },
+      "ratings": {"average": 8.3, "count": 11000}
+    }
+  ]
+}

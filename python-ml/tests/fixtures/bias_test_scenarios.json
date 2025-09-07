@@ -1,0 +1,461 @@
+{
+  "geographic_bias_scenarios": [
+    {
+      "scenario_name": "extreme_us_dominance",
+      "description": "Dataset with 95% US movies - should trigger CRITICAL geographic bias",
+      "movies": [
+        {"country": "US", "title": "US Movie 1"},
+        {"country": "US", "title": "US Movie 2"}, 
+        {"country": "US", "title": "US Movie 3"},
+        {"country": "US", "title": "US Movie 4"},
+        {"country": "US", "title": "US Movie 5"},
+        {"country": "US", "title": "US Movie 6"},
+        {"country": "US", "title": "US Movie 7"},
+        {"country": "US", "title": "US Movie 8"},
+        {"country": "US", "title": "US Movie 9"},
+        {"country": "US", "title": "US Movie 10"},
+        {"country": "US", "title": "US Movie 11"},
+        {"country": "US", "title": "US Movie 12"},
+        {"country": "US", "title": "US Movie 13"},
+        {"country": "US", "title": "US Movie 14"},
+        {"country": "US", "title": "US Movie 15"},
+        {"country": "US", "title": "US Movie 16"},
+        {"country": "US", "title": "US Movie 17"},
+        {"country": "US", "title": "US Movie 18"},
+        {"country": "US", "title": "US Movie 19"},
+        {"country": "CA", "title": "Canadian Movie"}
+      ],
+      "expected_severity": "CRITICAL",
+      "expected_flags": ["Extreme concentration in US", "US over-representation"]
+    },
+    {
+      "scenario_name": "moderate_us_bias",
+      "description": "Dataset with 70% US movies - should trigger MEDIUM geographic bias",
+      "movies": [
+        {"country": "US", "title": "US Movie 1"},
+        {"country": "US", "title": "US Movie 2"},
+        {"country": "US", "title": "US Movie 3"},
+        {"country": "US", "title": "US Movie 4"},
+        {"country": "US", "title": "US Movie 5"},
+        {"country": "US", "title": "US Movie 6"},
+        {"country": "US", "title": "US Movie 7"},
+        {"country": "GB", "title": "British Movie 1"},
+        {"country": "FR", "title": "French Movie 1"},
+        {"country": "DE", "title": "German Movie 1"}
+      ],
+      "expected_severity": "MEDIUM", 
+      "expected_flags": ["US over-representation"]
+    },
+    {
+      "scenario_name": "geographically_diverse",
+      "description": "Well-balanced geographic representation - should be LOW bias",
+      "movies": [
+        {"country": "US", "title": "American Movie"},
+        {"country": "GB", "title": "British Movie"},
+        {"country": "FR", "title": "French Movie"},
+        {"country": "DE", "title": "German Movie"},
+        {"country": "JP", "title": "Japanese Movie"},
+        {"country": "KR", "title": "Korean Movie"},
+        {"country": "IN", "title": "Indian Movie"},
+        {"country": "BR", "title": "Brazilian Movie"},
+        {"country": "CN", "title": "Chinese Movie"},
+        {"country": "IT", "title": "Italian Movie"}
+      ],
+      "expected_severity": "LOW",
+      "expected_flags": []
+    }
+  ],
+  "language_bias_scenarios": [
+    {
+      "scenario_name": "extreme_english_dominance", 
+      "description": "Dataset with 95% English movies - should trigger HIGH language bias",
+      "movies": [
+        {"language": "en", "title": "English Movie 1"},
+        {"language": "en", "title": "English Movie 2"},
+        {"language": "en", "title": "English Movie 3"},
+        {"language": "en", "title": "English Movie 4"},
+        {"language": "en", "title": "English Movie 5"},
+        {"language": "en", "title": "English Movie 6"},
+        {"language": "en", "title": "English Movie 7"},
+        {"language": "en", "title": "English Movie 8"},
+        {"language": "en", "title": "English Movie 9"},
+        {"language": "en", "title": "English Movie 10"},
+        {"language": "en", "title": "English Movie 11"},
+        {"language": "en", "title": "English Movie 12"},
+        {"language": "en", "title": "English Movie 13"},
+        {"language": "en", "title": "English Movie 14"},
+        {"language": "en", "title": "English Movie 15"},
+        {"language": "en", "title": "English Movie 16"},
+        {"language": "en", "title": "English Movie 17"},
+        {"language": "en", "title": "English Movie 18"},
+        {"language": "en", "title": "English Movie 19"},
+        {"language": "fr", "title": "French Movie"}
+      ],
+      "expected_severity": "HIGH",
+      "expected_flags": ["English over-representation"]
+    },
+    {
+      "scenario_name": "linguistically_diverse",
+      "description": "Well-balanced language representation - should be LOW bias",
+      "movies": [
+        {"language": "en", "title": "English Movie"},
+        {"language": "es", "title": "Spanish Movie"},
+        {"language": "fr", "title": "French Movie"},
+        {"language": "de", "title": "German Movie"},
+        {"language": "ja", "title": "Japanese Movie"},
+        {"language": "ko", "title": "Korean Movie"},
+        {"language": "zh", "title": "Chinese Movie"},
+        {"language": "hi", "title": "Hindi Movie"},
+        {"language": "pt", "title": "Portuguese Movie"},
+        {"language": "it", "title": "Italian Movie"}
+      ],
+      "expected_severity": "LOW",
+      "expected_flags": []
+    }
+  ],
+  "temporal_bias_scenarios": [
+    {
+      "scenario_name": "extreme_modern_bias",
+      "description": "Dataset with 90% movies from 2015+ - should trigger HIGH temporal bias",
+      "movies": [
+        {"year": 2023, "title": "Recent Movie 1"},
+        {"year": 2022, "title": "Recent Movie 2"},
+        {"year": 2021, "title": "Recent Movie 3"},
+        {"year": 2020, "title": "Recent Movie 4"},
+        {"year": 2019, "title": "Recent Movie 5"},
+        {"year": 2018, "title": "Recent Movie 6"},
+        {"year": 2017, "title": "Recent Movie 7"},
+        {"year": 2016, "title": "Recent Movie 8"},
+        {"year": 2015, "title": "Recent Movie 9"},
+        {"year": 1995, "title": "Older Movie"}
+      ],
+      "expected_severity": "HIGH",
+      "expected_flags": ["Very recent bias"]
+    },
+    {
+      "scenario_name": "narrow_temporal_range",
+      "description": "Movies all from 2020-2023 - should trigger MEDIUM temporal bias",
+      "movies": [
+        {"year": 2020, "title": "2020 Movie 1"},
+        {"year": 2020, "title": "2020 Movie 2"},
+        {"year": 2021, "title": "2021 Movie 1"},
+        {"year": 2021, "title": "2021 Movie 2"},
+        {"year": 2022, "title": "2022 Movie 1"},
+        {"year": 2022, "title": "2022 Movie 2"},
+        {"year": 2023, "title": "2023 Movie 1"},
+        {"year": 2023, "title": "2023 Movie 2"}
+      ],
+      "expected_severity": "MEDIUM",
+      "expected_flags": ["Narrow temporal range"]
+    },
+    {
+      "scenario_name": "temporally_diverse",
+      "description": "Well-balanced temporal distribution - should be LOW bias",
+      "movies": [
+        {"year": 1950, "title": "Classic Movie 1"},
+        {"year": 1960, "title": "Classic Movie 2"},
+        {"year": 1975, "title": "70s Movie"},
+        {"year": 1985, "title": "80s Movie"},
+        {"year": 1995, "title": "90s Movie"},
+        {"year": 2000, "title": "2000s Movie"},
+        {"year": 2010, "title": "2010s Movie"},
+        {"year": 2020, "title": "2020s Movie"}
+      ],
+      "expected_severity": "LOW",
+      "expected_flags": []
+    }
+  ],
+  "genre_bias_scenarios": [
+    {
+      "scenario_name": "extreme_action_dominance",
+      "description": "Dataset with 80% action movies - should trigger MEDIUM genre bias",
+      "movies": [
+        {"genres": ["Action"], "title": "Action Movie 1"},
+        {"genres": ["Action"], "title": "Action Movie 2"},
+        {"genres": ["Action"], "title": "Action Movie 3"},
+        {"genres": ["Action"], "title": "Action Movie 4"},
+        {"genres": ["Action"], "title": "Action Movie 5"},
+        {"genres": ["Action"], "title": "Action Movie 6"},
+        {"genres": ["Action"], "title": "Action Movie 7"},
+        {"genres": ["Action"], "title": "Action Movie 8"},
+        {"genres": ["Drama"], "title": "Drama Movie"},
+        {"genres": ["Comedy"], "title": "Comedy Movie"}
+      ],
+      "expected_severity": "MEDIUM",
+      "expected_flags": ["Genre over-concentration"]
+    },
+    {
+      "scenario_name": "low_genre_diversity",
+      "description": "Only 3 genres represented - should trigger MEDIUM genre bias",
+      "movies": [
+        {"genres": ["Action"], "title": "Action Movie 1"},
+        {"genres": ["Action"], "title": "Action Movie 2"},
+        {"genres": ["Drama"], "title": "Drama Movie 1"},
+        {"genres": ["Drama"], "title": "Drama Movie 2"},
+        {"genres": ["Comedy"], "title": "Comedy Movie 1"},
+        {"genres": ["Comedy"], "title": "Comedy Movie 2"}
+      ],
+      "expected_severity": "MEDIUM",
+      "expected_flags": ["Low genre diversity"]
+    },
+    {
+      "scenario_name": "genre_diverse",
+      "description": "Well-balanced genre representation - should be LOW bias",
+      "movies": [
+        {"genres": ["Action"], "title": "Action Movie"},
+        {"genres": ["Drama"], "title": "Drama Movie"},
+        {"genres": ["Comedy"], "title": "Comedy Movie"},
+        {"genres": ["Thriller"], "title": "Thriller Movie"},
+        {"genres": ["Romance"], "title": "Romance Movie"},
+        {"genres": ["Horror"], "title": "Horror Movie"},
+        {"genres": ["Science Fiction"], "title": "Sci-Fi Movie"},
+        {"genres": ["Documentary"], "title": "Documentary Movie"},
+        {"genres": ["Animation"], "title": "Animation Movie"},
+        {"genres": ["Fantasy"], "title": "Fantasy Movie"}
+      ],
+      "expected_severity": "LOW",
+      "expected_flags": []
+    }
+  ],
+  "demographic_bias_scenarios": [
+    {
+      "scenario_name": "extreme_male_cast_bias",
+      "description": "Movies with heavily male-dominated casts - should trigger HIGH demographic bias",
+      "cast_scenarios": [
+        {
+          "movie_title": "Male Movie 1",
+          "cast": [
+            {"name": "Male Actor 1", "gender": "male"},
+            {"name": "Male Actor 2", "gender": "male"},
+            {"name": "Male Actor 3", "gender": "male"},
+            {"name": "Male Actor 4", "gender": "male"},
+            {"name": "Female Actor 1", "gender": "female"}
+          ]
+        },
+        {
+          "movie_title": "Male Movie 2", 
+          "cast": [
+            {"name": "Male Actor 5", "gender": "male"},
+            {"name": "Male Actor 6", "gender": "male"},
+            {"name": "Male Actor 7", "gender": "male"},
+            {"name": "Male Actor 8", "gender": "male"}
+          ]
+        }
+      ],
+      "expected_severity": "MEDIUM",
+      "expected_flags": ["Cast gender imbalance"]
+    },
+    {
+      "scenario_name": "male_dominated_crew",
+      "description": "Movies with male-dominated key crew positions - should trigger HIGH bias",
+      "crew_scenarios": [
+        {
+          "movie_title": "Crew Bias Movie 1",
+          "crew": [
+            {"name": "Male Director", "job": "Director", "gender": "male"},
+            {"name": "Male Writer", "job": "Writer", "gender": "male"},
+            {"name": "Male Producer", "job": "Producer", "gender": "male"}
+          ]
+        },
+        {
+          "movie_title": "Crew Bias Movie 2",
+          "crew": [
+            {"name": "Another Male Director", "job": "Director", "gender": "male"},
+            {"name": "Another Male Writer", "job": "Writer", "gender": "male"},
+            {"name": "Another Male Producer", "job": "Producer", "gender": "male"}
+          ]
+        }
+      ],
+      "expected_severity": "HIGH",
+      "expected_flags": ["Director heavily male-dominated", "Writer heavily male-dominated"]
+    },
+    {
+      "scenario_name": "demographically_balanced",
+      "description": "Well-balanced gender representation - should be LOW bias",
+      "cast_scenarios": [
+        {
+          "movie_title": "Balanced Movie 1",
+          "cast": [
+            {"name": "Male Actor 1", "gender": "male"},
+            {"name": "Male Actor 2", "gender": "male"},
+            {"name": "Female Actor 1", "gender": "female"},
+            {"name": "Female Actor 2", "gender": "female"}
+          ],
+          "crew": [
+            {"name": "Female Director", "job": "Director", "gender": "female"},
+            {"name": "Male Writer", "job": "Writer", "gender": "male"},
+            {"name": "Female Producer", "job": "Producer", "gender": "female"}
+          ]
+        }
+      ],
+      "expected_severity": "LOW",
+      "expected_flags": []
+    }
+  ],
+  "intersectional_bias_scenarios": [
+    {
+      "scenario_name": "multiple_bias_types",
+      "description": "Dataset with multiple types of bias - should compound severity",
+      "movies": [
+        {
+          "title": "Biased Movie 1",
+          "country": "US",
+          "language": "en", 
+          "year": 2023,
+          "genres": ["Action"],
+          "cast": [
+            {"name": "Male Actor 1", "gender": "male", "ethnicity": "Caucasian"},
+            {"name": "Male Actor 2", "gender": "male", "ethnicity": "Caucasian"}
+          ],
+          "crew": [
+            {"name": "Male Director", "job": "Director", "gender": "male", "ethnicity": "Caucasian"}
+          ]
+        },
+        {
+          "title": "Biased Movie 2",
+          "country": "US",
+          "language": "en",
+          "year": 2022,
+          "genres": ["Action"],
+          "cast": [
+            {"name": "Male Actor 3", "gender": "male", "ethnicity": "Caucasian"},
+            {"name": "Male Actor 4", "gender": "male", "ethnicity": "Caucasian"}
+          ],
+          "crew": [
+            {"name": "Male Director 2", "job": "Director", "gender": "male", "ethnicity": "Caucasian"}
+          ]
+        }
+      ],
+      "expected_overall_severity": "HIGH",
+      "expected_compound_flags": [
+        "US over-representation",
+        "English over-representation", 
+        "Genre over-concentration",
+        "Cast gender imbalance",
+        "Director heavily male-dominated"
+      ]
+    },
+    {
+      "scenario_name": "constitutional_ai_compliant",
+      "description": "Dataset that meets all Constitutional AI diversity requirements",
+      "movies": [
+        {
+          "title": "Diverse Movie 1",
+          "country": "US",
+          "language": "en",
+          "year": 1995,
+          "genres": ["Drama"],
+          "cast": [
+            {"name": "Male Actor", "gender": "male", "ethnicity": "Caucasian"},
+            {"name": "Female Actor", "gender": "female", "ethnicity": "African American"}
+          ],
+          "crew": [
+            {"name": "Female Director", "job": "Director", "gender": "female", "ethnicity": "Latino"}
+          ]
+        },
+        {
+          "title": "Diverse Movie 2", 
+          "country": "JP",
+          "language": "ja",
+          "year": 2005,
+          "genres": ["Animation"],
+          "cast": [
+            {"name": "Japanese Actor 1", "gender": "male", "ethnicity": "Japanese"},
+            {"name": "Japanese Actor 2", "gender": "female", "ethnicity": "Japanese"}
+          ],
+          "crew": [
+            {"name": "Japanese Director", "job": "Director", "gender": "male", "ethnicity": "Japanese"}
+          ]
+        },
+        {
+          "title": "Diverse Movie 3",
+          "country": "IN",
+          "language": "hi", 
+          "year": 2015,
+          "genres": ["Romance"],
+          "cast": [
+            {"name": "Indian Actor 1", "gender": "female", "ethnicity": "Indian"},
+            {"name": "Indian Actor 2", "gender": "male", "ethnicity": "Indian"}
+          ],
+          "crew": [
+            {"name": "Indian Director", "job": "Director", "gender": "female", "ethnicity": "Indian"}
+          ]
+        },
+        {
+          "title": "Diverse Movie 4",
+          "country": "FR",
+          "language": "fr",
+          "year": 1985,
+          "genres": ["Comedy"],
+          "cast": [
+            {"name": "French Actor 1", "gender": "male", "ethnicity": "French"},
+            {"name": "French Actor 2", "gender": "female", "ethnicity": "French"}
+          ],
+          "crew": [
+            {"name": "French Director", "job": "Director", "gender": "male", "ethnicity": "French"}
+          ]
+        },
+        {
+          "title": "Diverse Movie 5",
+          "country": "BR",
+          "language": "pt",
+          "year": 2000,
+          "genres": ["Thriller"],
+          "cast": [
+            {"name": "Brazilian Actor 1", "gender": "female", "ethnicity": "Brazilian"},
+            {"name": "Brazilian Actor 2", "gender": "male", "ethnicity": "Brazilian"}
+          ],
+          "crew": [
+            {"name": "Brazilian Director", "job": "Director", "gender": "female", "ethnicity": "Brazilian"}
+          ]
+        }
+      ],
+      "expected_overall_severity": "LOW",
+      "expected_compliance_status": "PASS"
+    }
+  ],
+  "edge_case_scenarios": [
+    {
+      "scenario_name": "single_movie_dataset",
+      "description": "Dataset with only one movie - edge case handling",
+      "movies": [
+        {
+          "title": "Only Movie",
+          "country": "US",
+          "language": "en",
+          "year": 2023,
+          "genres": ["Drama"]
+        }
+      ],
+      "expected_behavior": "Should handle gracefully without division by zero errors"
+    },
+    {
+      "scenario_name": "empty_dataset",
+      "description": "Empty dataset - should fail validation",
+      "movies": [],
+      "expected_compliance_status": "FAIL",
+      "expected_errors": ["No movies to validate"]
+    },
+    {
+      "scenario_name": "missing_metadata",
+      "description": "Movies with missing geographic/language metadata",
+      "movies": [
+        {
+          "title": "Missing Data Movie 1",
+          "country": null,
+          "language": null,
+          "year": 2023,
+          "genres": ["Drama"]
+        },
+        {
+          "title": "Missing Data Movie 2", 
+          "country": "Unknown",
+          "language": "unknown",
+          "year": 2022,
+          "genres": ["Comedy"]
+        }
+      ],
+      "expected_behavior": "Should use default values (US, en) and flag data quality issues"
+    }
+  ]
+}

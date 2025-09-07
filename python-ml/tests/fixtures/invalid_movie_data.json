@@ -1,0 +1,364 @@
+{
+  "invalid_movies": [
+    {
+      "movie_id": "invalid_001",
+      "title": "",
+      "synopsis": "Short",
+      "release_year": 2025,
+      "genres": [],
+      "ratings": {"average": 11.0, "count": -5},
+      "expected_errors": [
+        "Title cannot be empty",
+        "Synopsis must be at least 50 characters",
+        "At least one genre is required",
+        "Rating average out of range",
+        "Rating count must be non-negative"
+      ]
+    },
+    {
+      "movie_id": "invalid_002",
+      "title": "Untitled",
+      "synopsis": "No overview found for this movie.",
+      "release_year": 1800,
+      "genres": ["Drama"],
+      "ratings": {"average": 7.0, "count": 100},
+      "expected_errors": [
+        "Invalid placeholder title",
+        "Synopsis contains placeholder text",
+        "Release year.*before cinema invention"
+      ]
+    },
+    {
+      "movie_id": "invalid_003",
+      "title": "Valid Title",
+      "synopsis": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. This is a valid length synopsis for testing purposes.",
+      "release_year": 2023,
+      "release_date": "2020-06-15",
+      "genres": ["Drama"],
+      "ratings": {"average": 8.0, "count": 1000},
+      "expected_errors": [
+        "Release date year.*inconsistent with release year"
+      ]
+    },
+    {
+      "movie_id": "invalid_004", 
+      "title": "Cast Issues Movie",
+      "synopsis": "A movie to test cast validation issues and birth year problems with the validation system.",
+      "release_year": 2000,
+      "genres": ["Drama"],
+      "cast": [
+        {
+          "name": "Future Person",
+          "character": "Time Traveler",
+          "birth_year": 2010,
+          "order": 0
+        }
+      ],
+      "ratings": {"average": 7.0, "count": 500},
+      "expected_errors": [
+        "birth year.*is after movie release"
+      ]
+    },
+    {
+      "movie_id": "invalid_005",
+      "title": "Rating Distribution Error",
+      "synopsis": "This movie has invalid rating distribution that exceeds the total count for testing validation.",
+      "release_year": 2022,
+      "genres": ["Comedy"],
+      "ratings": {
+        "average": 8.0,
+        "count": 100,
+        "distribution": {"8": 50, "9": 60, "7": 40}
+      },
+      "expected_errors": [
+        "Distribution total cannot exceed.*rating count"
+      ]
+    },
+    {
+      "movie_id": "invalid_006",
+      "title": "Metadata Issues",
+      "synopsis": "Testing metadata validation with incorrect IMDB ID format and unrealistic financial data for validation testing.",
+      "release_year": 2023,
+      "genres": ["Action"],
+      "ratings": {"average": 7.5, "count": 2000},
+      "metadata": {
+        "imdb_id": "invalid123",
+        "budget": 1000000,
+        "revenue": 50
+      },
+      "expected_errors": [
+        "Invalid IMDB ID format",
+        "Budget significantly exceeds revenue"
+      ]
+    },
+    {
+      "movie_id": "invalid_007",
+      "title": "Character Limit Test " + "A" * 500,
+      "synopsis": "This synopsis is designed to test the character limits and validation boundaries of the system by being exactly the right length initially but the title will be too long.",
+      "release_year": 2023,
+      "genres": ["Drama"],
+      "ratings": {"average": 8.0, "count": 1000},
+      "expected_errors": [
+        "ensure this value has at most 500 characters"
+      ]
+    },
+    {
+      "movie_id": "invalid_008",
+      "title": "Name Validation Test",
+      "synopsis": "Testing cast and crew name validation with invalid characters and formats to ensure proper error handling.",
+      "release_year": 2023,
+      "genres": ["Drama"],
+      "cast": [
+        {
+          "name": "A",
+          "character": "Short Name",
+          "order": 0
+        },
+        {
+          "name": "Test123Name",
+          "character": "Invalid Characters",
+          "order": 1
+        }
+      ],
+      "ratings": {"average": 7.0, "count": 500},
+      "expected_errors": [
+        "Name must be at least 2 characters",
+        "Name contains invalid characters"
+      ]
+    },
+    {
+      "movie_id": "invalid_009",
+      "title": "Future Birth Years",
+      "synopsis": "Testing birth year validation with future birth years that should be rejected by the system validation.",
+      "release_year": 2023,
+      "genres": ["Sci-Fi"],
+      "cast": [
+        {
+          "name": "Future Actor",
+          "birth_year": 2030,
+          "order": 0
+        }
+      ],
+      "crew": [
+        {
+          "name": "Future Director",
+          "job": "Director",
+          "department": "Directing",
+          "birth_year": 2025
+        }
+      ],
+      "ratings": {"average": 6.5, "count": 300},
+      "expected_errors": [
+        "Birth year cannot be in the future"
+      ]
+    },
+    {
+      "movie_id": "invalid_010",
+      "title": "Extreme Values Test",
+      "synopsis": "Testing extreme boundary values that should trigger validation errors for unrealistic data ranges.",
+      "release_year": 3000,
+      "genres": ["Drama"],
+      "ratings": {"average": -5.0, "count": 0},
+      "metadata": {
+        "runtime": -30,
+        "budget": -1000000,
+        "revenue": -500000,
+        "popularity": -10.5
+      },
+      "expected_errors": [
+        "ensure this value is less than or equal to 2030",
+        "ensure this value is greater than or equal to 0.0",
+        "ensure this value is greater than or equal to 1",
+        "ensure this value is greater than or equal to 0"
+      ]
+    }
+  ],
+  "tmdb_api_errors": [
+    {
+      "description": "Missing required fields",
+      "tmdb_response": {
+        "id": 999999,
+        "vote_average": 7.0,
+        "vote_count": 1000
+      },
+      "expected_errors": [
+        "title.*required",
+        "overview.*synopsis.*required"
+      ]
+    },
+    {
+      "description": "Invalid genre mapping", 
+      "tmdb_response": {
+        "id": 999998,
+        "title": "Test Movie",
+        "overview": "A valid synopsis with sufficient length for testing genre mapping errors and validation systems.",
+        "release_date": "2023-05-15",
+        "genres": [
+          {"id": 9999, "name": "Invalid Genre"}
+        ],
+        "vote_average": 8.0,
+        "vote_count": 5000,
+        "original_language": "en"
+      },
+      "expected_behavior": "Should map invalid genres to 'Other' genre"
+    },
+    {
+      "description": "Malformed dates",
+      "tmdb_response": {
+        "id": 999997,
+        "title": "Date Test Movie",
+        "overview": "Testing malformed release date handling in TMDB API response mapping and validation systems.",
+        "release_date": "invalid-date-format",
+        "genres": [{"id": 18, "name": "Drama"}],
+        "vote_average": 7.5,
+        "vote_count": 2000,
+        "original_language": "en"
+      },
+      "expected_behavior": "Should handle gracefully and use current year"
+    },
+    {
+      "description": "Empty credits response",
+      "tmdb_credits": {
+        "cast": [],
+        "crew": []
+      },
+      "expected_behavior": "Should create movie with empty cast and crew lists"
+    },
+    {
+      "description": "Missing person information",
+      "tmdb_credits": {
+        "cast": [
+          {
+            "id": 12345,
+            "order": 0
+          }
+        ],
+        "crew": [
+          {
+            "id": 67890,
+            "job": "Director"
+          }
+        ]
+      },
+      "expected_behavior": "Should handle missing names gracefully"
+    }
+  ],
+  "edge_cases": [
+    {
+      "description": "Minimum valid movie",
+      "movie_data": {
+        "movie_id": "min_001",
+        "title": "A",
+        "synopsis": "A" * 50,
+        "release_year": 1895,
+        "genres": ["Other"],
+        "ratings": {"average": 0.0, "count": 0}
+      }
+    },
+    {
+      "description": "Maximum fields movie",
+      "movie_data": {
+        "movie_id": "max_001",
+        "title": "X" * 500,
+        "synopsis": "A" * 5000,
+        "release_year": 2030,
+        "genres": [
+          "Action", "Adventure", "Animation", "Comedy", "Crime",
+          "Documentary", "Drama", "Family", "Fantasy", "History"
+        ],
+        "ratings": {"average": 10.0, "count": 999999999},
+        "cast": [
+          {"name": f"Actor {i}", "order": i} for i in range(100)
+        ]
+      }
+    },
+    {
+      "description": "Unicode and special characters",
+      "movie_data": {
+        "movie_id": "unicode_001",
+        "title": "测试电影 & Película Ñoña: émöjï 🎬",
+        "synopsis": "这是一个包含中文、西班牙语、特殊字符和表情符号的测试电影简介，用于验证系统对国际化内容的支持。También incluye acentos y caracteres especiales para pruebas completas. 🎭🎪",
+        "release_year": 2023,
+        "genres": ["Drama"],
+        "ratings": {"average": 8.0, "count": 1000},
+        "cast": [
+          {
+            "name": "李小明",
+            "character": "主角",
+            "nationality": "Chinese",
+            "order": 0
+          },
+          {
+            "name": "María José García-López",
+            "character": "Protagonista Femenina",
+            "nationality": "Spanish",
+            "order": 1
+          }
+        ]
+      }
+    },
+    {
+      "description": "Very old movie",
+      "movie_data": {
+        "movie_id": "old_001",
+        "title": "The Great Train Robbery",
+        "synopsis": "One of the earliest narrative films, this Western short depicts a train robbery and the subsequent pursuit of the criminals by a posse.",
+        "release_year": 1903,
+        "genres": ["Western", "Action"],
+        "ratings": {"average": 7.3, "count": 500},
+        "metadata": {
+          "runtime": 12,
+          "origin_country": "US"
+        }
+      }
+    },
+    {
+      "description": "Documentary with educational content",
+      "movie_data": {
+        "movie_id": "doc_001", 
+        "title": "An Inconvenient Truth",
+        "synopsis": "Filmmaker Davis Guggenheim follows Al Gore on the lecture circuit, as the former presidential candidate campaigns to raise public awareness of the dangers of global warming and calls for immediate action to curb its destructive effects on the environment.",
+        "release_year": 2006,
+        "genres": ["Documentary"],
+        "ratings": {"average": 7.4, "count": 8000},
+        "metadata": {
+          "runtime": 96,
+          "content_rating": "PG"
+        }
+      }
+    },
+    {
+      "description": "Silent film",
+      "movie_data": {
+        "movie_id": "silent_001",
+        "title": "The Cabinet of Dr. Caligari",
+        "original_title": "Das Cabinet des Dr. Caligari",
+        "synopsis": "Hypnotist Dr. Caligari uses a somnambulist, Cesare, to commit murders. This German Expressionist film is considered a landmark in cinema history for its visual style and psychological themes.",
+        "release_year": 1920,
+        "genres": ["Horror", "Mystery"],
+        "ratings": {"average": 8.0, "count": 3000},
+        "metadata": {
+          "original_language": "de",
+          "origin_country": "DE",
+          "runtime": 76
+        }
+      }
+    },
+    {
+      "description": "Experimental film with minimal traditional structure",
+      "movie_data": {
+        "movie_id": "experimental_001",
+        "title": "Eraserhead",
+        "synopsis": "Henry Spencer tries to survive his industrial environment, his angry girlfriend, and the unbearable screams of his newly born mutant child. David Lynch's surreal debut explores themes of alienation and anxiety through nightmarish imagery.",
+        "release_year": 1977,
+        "genres": ["Horror", "Fantasy"],
+        "ratings": {"average": 7.3, "count": 2500},
+        "metadata": {
+          "runtime": 89,
+          "budget": 10000,
+          "content_rating": "NR"
+        }
+      }
+    }
+  ]
+}
