@@ -304,6 +304,7 @@ class DatasetDownloader:
 
         # Override max_movies from environment variables if set
         import os
+
         env_max = os.environ.get("MOVIERECS_MAX_MOVIES")
         if env_max:
             max_movies = min(int(env_max), 10000)  # Cap at 10k for API limits
@@ -322,29 +323,31 @@ class DatasetDownloader:
         # Strategy 1: Get popular movies with pagination
         logger.info("Strategy 1: Fetching popular movies across multiple pages...")
         max_pages_popular = min(25, (max_movies // 20) + 1)  # TMDB returns ~20 movies per page
-        
+
         for page in range(1, max_pages_popular + 1):
             if len(all_movies) >= max_movies:
                 break
-                
+
             try:
                 logger.info(f"Fetching popular movies page {page}/{max_pages_popular}")
                 popular_movies = tmdb_client.get_popular_movies_with_diversity(page=page, ensure_diversity=True)
                 movies_from_page = popular_movies.get("results", [])
-                
+
                 # Avoid duplicates
                 existing_ids = {movie.get("id") for movie in all_movies}
                 new_movies = [movie for movie in movies_from_page if movie.get("id") not in existing_ids]
                 all_movies.extend(new_movies)
-                
-                logger.info(f"Added {len(new_movies)} unique movies from popular page {page} "
-                           f"(total: {len(all_movies)}/{max_movies})")
-                
+
+                logger.info(
+                    f"Added {len(new_movies)} unique movies from popular page {page} "
+                    f"(total: {len(all_movies)}/{max_movies})"
+                )
+
                 # If we got fewer than expected, we might have hit the end
                 if len(movies_from_page) < 15:
                     logger.info("Fewer movies returned than expected, likely reached end of popular results")
                     break
-                    
+
             except Exception as e:
                 logger.warning(f"Error fetching popular movies page {page}: {e}")
                 continue
@@ -391,28 +394,28 @@ class DatasetDownloader:
 
         # Strategy 2: Discover movies with pagination for each strategy
         logger.info("Strategy 2: Fetching diverse movies using discovery with pagination...")
-        
+
         for i, strategy in enumerate(discover_strategies):
             if len(all_movies) >= max_movies:
                 break
 
-            strategy_name = strategy.get('sort_by', 'custom')
+            strategy_name = strategy.get("sort_by", "custom")
             logger.info(f"Applying discovery strategy {i+1}: {strategy_name}")
-            
+
             # Calculate pages needed for this strategy (aim for ~100 movies per strategy)
             movies_per_strategy = min(200, max(50, (max_movies - len(all_movies)) // len(discover_strategies)))
             max_pages_strategy = min(10, (movies_per_strategy // 20) + 1)
-            
+
             strategy_movies_count = 0
             for page in range(1, max_pages_strategy + 1):
                 if len(all_movies) >= max_movies or strategy_movies_count >= movies_per_strategy:
                     break
-                
+
                 try:
                     # Add page parameter to strategy
                     strategy_with_page = strategy.copy()
                     strategy_with_page["page"] = page
-                    
+
                     logger.debug(f"Strategy {i+1} page {page}/{max_pages_strategy}")
                     discovered = tmdb_client.discover_diverse_movies(**strategy_with_page)
                     new_movies = discovered.get("results", [])
@@ -423,9 +426,9 @@ class DatasetDownloader:
 
                     all_movies.extend(unique_new_movies)
                     strategy_movies_count += len(unique_new_movies)
-                    
+
                     logger.debug(f"Strategy {i+1} page {page}: added {len(unique_new_movies)} unique movies")
-                    
+
                     # If we got fewer than expected, we might have hit the end
                     if len(new_movies) < 15:
                         logger.debug(f"Strategy {i+1}: fewer movies returned, likely reached end")
@@ -434,15 +437,17 @@ class DatasetDownloader:
                 except Exception as e:
                     logger.warning(f"Error with discovery strategy {i+1} page {page}: {e}")
                     continue
-            
-            logger.info(f"Strategy {i+1} ({strategy_name}): added {strategy_movies_count} movies "
-                       f"(total: {len(all_movies)}/{max_movies})")
+
+            logger.info(
+                f"Strategy {i+1} ({strategy_name}): added {strategy_movies_count} movies "
+                f"(total: {len(all_movies)}/{max_movies})"
+            )
 
         # Strategy 3: Fetch detailed data for top movies to ensure quality
-        # Limit detailed fetching to avoid timeouts for large datasets  
+        # Limit detailed fetching to avoid timeouts for large datasets
         max_detailed = min(max_movies, len(all_movies), 150)  # Cap at 150 for performance
         logger.info(f"Fetching detailed data for top {max_detailed} movies (out of {len(all_movies)} found)")
-        
+
         detailed_movies = []
         for i, movie in enumerate(all_movies[:max_detailed]):
             try:

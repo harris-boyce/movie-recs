@@ -343,40 +343,40 @@ def _transform_tmdb_data(data: Dict[str, Any]) -> Dict[str, Any]:
     """Transform TMDB-style data to match our Movie schema."""
     # Create a copy to avoid modifying original data
     transformed = data.copy()
-    
+
     # Transform cast data
     if "cast" in transformed and transformed["cast"]:
         transformed_cast = []
         for cast_member in transformed["cast"]:
             if isinstance(cast_member, dict):
                 transformed_member = cast_member.copy()
-                
+
                 # Map character to role for cast members
                 if "character" in transformed_member and "role" not in transformed_member:
                     transformed_member["role"] = "actor"  # Cast members are actors
-                
+
                 # Convert TMDB gender integers to strings
                 if "gender" in transformed_member and isinstance(transformed_member["gender"], int):
                     gender_map = {0: "unknown", 1: "female", 2: "male", 3: "non-binary"}
                     transformed_member["gender"] = gender_map.get(transformed_member["gender"], "unknown")
-                
+
                 transformed_cast.append(transformed_member)
         transformed["cast"] = transformed_cast
-    
+
     # Transform crew data
     if "crew" in transformed and transformed["crew"]:
         transformed_crew = []
         for crew_member in transformed["crew"]:
             if isinstance(crew_member, dict):
                 transformed_member = crew_member.copy()
-                
+
                 # Map job to role for crew members
                 if "job" in transformed_member and "role" not in transformed_member:
                     job = transformed_member["job"].lower()
                     # Map common TMDB job titles to our role enum
                     job_to_role_map = {
                         "director": "director",
-                        "writer": "writer", 
+                        "writer": "writer",
                         "screenplay": "writer",
                         "producer": "producer",
                         "executive producer": "producer",
@@ -390,15 +390,15 @@ def _transform_tmdb_data(data: Dict[str, Any]) -> Dict[str, Any]:
                         "composer": "composer",
                     }
                     transformed_member["role"] = job_to_role_map.get(job, "producer")  # Default fallback
-                
-                # Convert TMDB gender integers to strings  
+
+                # Convert TMDB gender integers to strings
                 if "gender" in transformed_member and isinstance(transformed_member["gender"], int):
                     gender_map = {0: "unknown", 1: "female", 2: "male", 3: "non-binary"}
                     transformed_member["gender"] = gender_map.get(transformed_member["gender"], "unknown")
-                
+
                 transformed_crew.append(transformed_member)
         transformed["crew"] = transformed_crew
-    
+
     return transformed
 
 

@@ -209,7 +209,7 @@ class CastMember(BaseModel):
         if not re.match(r"^[^\x00-\x1f\x7f-\x9f]+$", v):
             raise ValueError("Name contains invalid characters")
         return v
-    
+
     @field_validator("gender")
     def convert_gender(cls, v):
         # TMDB: 1 = Female, 2 = Male, 0/None = Unknown
