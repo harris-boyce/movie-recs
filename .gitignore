@@ -90,3 +90,6 @@ logs/
 *.log
 python-ml/data/raw/ml-25m.zip
 python-ml/data/raw/extracted/ml-25m/README.txt
+
+# Temporary test files
+python-ml/test_pipeline.py

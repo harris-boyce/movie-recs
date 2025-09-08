@@ -22,14 +22,30 @@ class SchemaVersion(str, Enum):
 class Language(str, Enum):
     """Common language codes."""
 
-    EN = "en"
-    ES = "es"
-    FR = "fr"
-    DE = "de"
-    IT = "it"
-    JA = "ja"
-    KO = "ko"
-    ZH = "zh"
+    EN = "en"  # English
+    ES = "es"  # Spanish
+    FR = "fr"  # French
+    DE = "de"  # German
+    IT = "it"  # Italian
+    JA = "ja"  # Japanese
+    KO = "ko"  # Korean
+    ZH = "zh"  # Chinese
+    PT = "pt"  # Portuguese
+    RU = "ru"  # Russian
+    AR = "ar"  # Arabic
+    PL = "pl"  # Polish
+    MS = "ms"  # Malay
+    TL = "tl"  # Tagalog
+    SR = "sr"  # Serbian
+    FA = "fa"  # Persian/Farsi
+    TE = "te"  # Telugu
+    ML = "ml"  # Malayalam
+    NO = "no"  # Norwegian
+    HU = "hu"  # Hungarian
+    CS = "cs"  # Czech
+    HI = "hi"  # Hindi
+    TR = "tr"  # Turkish
+    TA = "ta"  # Tamil
     OTHER = "other"
 
 
@@ -314,11 +330,76 @@ def get_schema_info() -> Dict[str, Any]:
 def create_movie_from_dict(data: Dict[str, Any]) -> Movie:
     """Create Movie instance from dictionary with error handling."""
     try:
-        return Movie(**data)
+        # Transform TMDB-style data to match our schema
+        transformed_data = _transform_tmdb_data(data)
+        return Movie(**transformed_data)
     except Exception as e:
         # Add movie_id to error for better debugging
         movie_id = data.get("movie_id", "unknown")
         raise ValueError(f"Error creating movie {movie_id}: {str(e)}") from e
+
+
+def _transform_tmdb_data(data: Dict[str, Any]) -> Dict[str, Any]:
+    """Transform TMDB-style data to match our Movie schema."""
+    # Create a copy to avoid modifying original data
+    transformed = data.copy()
+
+    # Transform cast data
+    if "cast" in transformed and transformed["cast"]:
+        transformed_cast = []
+        for cast_member in transformed["cast"]:
+            if isinstance(cast_member, dict):
+                transformed_member = cast_member.copy()
+
+                # Map character to role for cast members
+                if "character" in transformed_member and "role" not in transformed_member:
+                    transformed_member["role"] = "actor"  # Cast members are actors
+
+                # Convert TMDB gender integers to strings
+                if "gender" in transformed_member and isinstance(transformed_member["gender"], int):
+                    gender_map = {0: "unknown", 1: "female", 2: "male", 3: "non-binary"}
+                    transformed_member["gender"] = gender_map.get(transformed_member["gender"], "unknown")
+
+                transformed_cast.append(transformed_member)
+        transformed["cast"] = transformed_cast
+
+    # Transform crew data
+    if "crew" in transformed and transformed["crew"]:
+        transformed_crew = []
+        for crew_member in transformed["crew"]:
+            if isinstance(crew_member, dict):
+                transformed_member = crew_member.copy()
+
+                # Map job to role for crew members
+                if "job" in transformed_member and "role" not in transformed_member:
+                    job = transformed_member["job"].lower()
+                    # Map common TMDB job titles to our role enum
+                    job_to_role_map = {
+                        "director": "director",
+                        "writer": "writer",
+                        "screenplay": "writer",
+                        "producer": "producer",
+                        "executive producer": "producer",
+                        "co-producer": "producer",
+                        "cinematographer": "cinematographer",
+                        "director of photography": "cinematographer",
+                        "editor": "editor",
+                        "film editor": "editor",
+                        "music": "composer",
+                        "original music composer": "composer",
+                        "composer": "composer",
+                    }
+                    transformed_member["role"] = job_to_role_map.get(job, "producer")  # Default fallback
+
+                # Convert TMDB gender integers to strings
+                if "gender" in transformed_member and isinstance(transformed_member["gender"], int):
+                    gender_map = {0: "unknown", 1: "female", 2: "male", 3: "non-binary"}
+                    transformed_member["gender"] = gender_map.get(transformed_member["gender"], "unknown")
+
+                transformed_crew.append(transformed_member)
+        transformed["crew"] = transformed_crew
+
+    return transformed
 
 
 def validate_movie_dict(data: Dict[str, Any]) -> ValidationResult:

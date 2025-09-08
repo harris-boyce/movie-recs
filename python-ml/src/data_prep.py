@@ -421,7 +421,7 @@ class DataPipeline:
             split_data = self.feature_engineer.create_train_test_split(
                 valid_movies,
                 test_size=0.2,
-                stratify_by_genre=len(valid_movies) > 20,
+                stratify_by_genre=len(valid_movies) > 200,  # Temporarily disable stratification for smaller datasets
                 random_state=42,
             )
 

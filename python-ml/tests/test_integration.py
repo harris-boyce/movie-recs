@@ -155,7 +155,7 @@ class TestPipelineIntegration(unittest.TestCase):
         else:
             print(f"✅ Pipeline handled malformed data: {results['summary']['valid_movies']} valid movies")
 
-    @pytest.mark.skip(reason="Bias detection has pandas DataFrame filtering issue - see GitHub issue #5")
+    # @pytest.mark.skip(reason="Bias detection has pandas DataFrame filtering issue - see GitHub issue #5")
     def test_bias_detection_with_biased_dataset(self):
         """Test bias detection with intentionally biased data."""
         print("\n🧪 Testing bias detection with biased dataset...")

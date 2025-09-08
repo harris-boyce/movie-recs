@@ -106,7 +106,6 @@ jobs:
   integration-test:
     name: Integration Tests
     runs-on: ubuntu-latest
-    if: false
     needs: [lint-and-format, test-suite]
     
     steps:
@@ -130,13 +129,14 @@ jobs:
         mkdir -p configs
         cp configs/data_config.yaml configs/test_config.yaml || echo "Config file not found, using defaults"
         
-    - name: Test pipeline with sample data
+    - name: Test pipeline with TMDB data
       working-directory: python-ml
       env:
-        MOVIERECS_MAX_MOVIES: '1000'
-        MOVIERECS_MIN_MOVIES: '1'
+        MOVIERECS_MAX_MOVIES: '200'
+        MOVIERECS_MIN_MOVIES: '100'
         MOVIERECS_OUTPUT_DIR: 'data'
         PYTHONPATH: 'src'
+        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       run: |
         python -c "
         from src.data_prep import DataPipeline
@@ -362,9 +362,9 @@ jobs:
     steps:
     - name: Check build status
       run: |
-        # "${{ needs.integration-test.result }}" == "success" && 
         if [[ "${{ needs.lint-and-format.result }}" == "success" && 
               "${{ needs.test-suite.result }}" == "success" && 
+              "${{ needs.integration-test.result }}" == "success" && 
               "${{ needs.performance-benchmark.result }}" == "success" ]]; then
           echo "🎉 All checks passed! Build is successful."
         else
