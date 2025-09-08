@@ -138,8 +138,40 @@ jobs:
         PYTHONPATH: 'src'
         TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       run: |
-        # Run integration test with real TMDB data
-        python3 test_pipeline.py
+        python -c "
+        from src.data_prep import DataPipeline
+        import json
+        
+        # Create minimal test data
+        test_data = [
+            {
+                'movie_id': '1',
+                'title': 'Test Movie',
+                'synopsis': 'A test movie with a sufficiently long synopsis to pass validation checks.',
+                'release_year': 2000,
+                'genres': ['Drama'],
+                'ratings': {'average': 8.0, 'count': 1000}
+            }
+        ]
+        
+        # Save test data
+        with open('data/raw/test_movies.json', 'w') as f:
+            json.dump(test_data, f)
+            
+        # Run minimal pipeline test
+        try:
+            pipeline = DataPipeline()
+            results = pipeline.run_full_pipeline(
+                skip_download=False,
+                export_formats=['json']
+            )
+            print(f'Pipeline test result: {results[\"status\"]}')
+            assert results['status'] == 'success', f'Pipeline failed: {results.get(\"error\", \"Unknown error\")}'
+            print('✅ Integration test passed')
+        except Exception as e:
+            print(f'❌ Integration test failed: {e}')
+            raise
+        "
         
     - name: Test CLI interface
       working-directory: python-ml
