@@ -354,7 +354,7 @@ class BiasDetector:
         if len(country_counts) < 5:
             bias_flags.append(f"Very low geographic diversity: {len(country_counts)} countries")
             severity = max(
-                severity, BiasSeverity.MEDIUM, key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
+                [severity, BiasSeverity.MEDIUM], key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
             )
 
         return {
@@ -400,7 +400,7 @@ class BiasDetector:
         if len(language_counts) < 5:
             bias_flags.append(f"Very low language diversity: {len(language_counts)} languages")
             severity = max(
-                severity, BiasSeverity.MEDIUM, key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
+                [severity, BiasSeverity.MEDIUM], key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
             )
 
         return {
@@ -454,7 +454,7 @@ class BiasDetector:
         if year_range < 20:
             bias_flags.append(f"Narrow temporal range: {year_range} years")
             severity = max(
-                severity, BiasSeverity.MEDIUM, key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
+                [severity, BiasSeverity.MEDIUM], key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
             )
 
         return {
@@ -498,7 +498,7 @@ class BiasDetector:
         if len(genre_counts) < 5:
             bias_flags.append(f"Low genre diversity: {len(genre_counts)} genres")
             severity = max(
-                severity, BiasSeverity.MEDIUM, key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
+                [severity, BiasSeverity.MEDIUM], key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
             )
 
         return {
@@ -551,7 +551,8 @@ class BiasDetector:
                 if male_pct > 0.8:
                     bias_flags.append(f"{role} heavily male-dominated: {male_pct:.1%}")
                     severity = max(
-                        severity, BiasSeverity.HIGH, key=lambda x: ["low", "medium", "high", "critical"].index(x.value)
+                        [severity, BiasSeverity.HIGH],
+                        key=lambda x: ["low", "medium", "high", "critical"].index(x.value),
                     )
 
         return {
