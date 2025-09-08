@@ -52,6 +52,13 @@ class Language(str, Enum):
     HU = "hu"  # Hungarian
     CS = "cs"  # Czech
     SK = "sk"  # Slovak
+    MS = "ms"  # Malay
+    TL = "tl"  # Tagalog
+    SR = "sr"  # Serbian
+    FA = "fa"  # Persian/Farsi
+    TE = "te"  # Telugu
+    ML = "ml"  # Malayalam
+    TA = "ta"  # Tamil
     OTHER = "other"
 
 
@@ -173,7 +180,7 @@ class CastMember(BaseModel):
     # Demographic information (when available)
     birth_year: Optional[int] = Field(None, ge=1800, description="Birth year")
     birth_place: Optional[str] = Field(None, max_length=200, description="Place of birth")
-    gender: Optional[str] = Field(None, pattern=r"^(male|female|non-binary|other|unknown)$")
+    gender: Optional[str] = Field(None)
     ethnicity: Optional[str] = Field(None, max_length=100, description="Ethnicity/cultural background")
     nationality: Optional[str] = Field(None, max_length=100, description="Nationality")
 
@@ -201,6 +208,13 @@ class CastMember(BaseModel):
         # Basic character validation - allow unicode letters, spaces, hyphens, apostrophes
         if not re.match(r"^[^\x00-\x1f\x7f-\x9f]+$", v):
             raise ValueError("Name contains invalid characters")
+        return v
+    
+    @field_validator("gender")
+    def convert_gender(cls, v):
+        # TMDB: 1 = Female, 2 = Male, 0/None = Unknown
+        if isinstance(v, int):
+            return {1: "Female", 2: "Male", 0: "Unknown"}.get(v, "Unknown")
         return v
 
 

@@ -106,7 +106,6 @@ jobs:
   integration-test:
     name: Integration Tests
     runs-on: ubuntu-latest
-    if: false
     needs: [lint-and-format, test-suite]
     
     steps:
@@ -130,49 +129,17 @@ jobs:
         mkdir -p configs
         cp configs/data_config.yaml configs/test_config.yaml || echo "Config file not found, using defaults"
         
-    - name: Test pipeline with sample data
+    - name: Test pipeline with TMDB data
       working-directory: python-ml
       env:
-        MOVIERECS_MAX_MOVIES: '1000'
-        MOVIERECS_MIN_MOVIES: '1'
+        MOVIERECS_MAX_MOVIES: '200'
+        MOVIERECS_MIN_MOVIES: '100'
         MOVIERECS_OUTPUT_DIR: 'data'
         PYTHONPATH: 'src'
         TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       run: |
-        python -c "
-        from src.data_prep import DataPipeline
-        import json
-        
-        # Create minimal test data
-        test_data = [
-            {
-                'movie_id': '1',
-                'title': 'Test Movie',
-                'synopsis': 'A test movie with a sufficiently long synopsis to pass validation checks.',
-                'release_year': 2000,
-                'genres': ['Drama'],
-                'ratings': {'average': 8.0, 'count': 1000}
-            }
-        ]
-        
-        # Save test data
-        with open('data/raw/test_movies.json', 'w') as f:
-            json.dump(test_data, f)
-            
-        # Run minimal pipeline test
-        try:
-            pipeline = DataPipeline()
-            results = pipeline.run_full_pipeline(
-                skip_download=False,
-                export_formats=['json']
-            )
-            print(f'Pipeline test result: {results[\"status\"]}')
-            assert results['status'] == 'success', f'Pipeline failed: {results.get(\"error\", \"Unknown error\")}'
-            print('✅ Integration test passed')
-        except Exception as e:
-            print(f'❌ Integration test failed: {e}')
-            raise
-        "
+        # Run integration test with real TMDB data
+        python3 test_pipeline.py
         
     - name: Test CLI interface
       working-directory: python-ml
@@ -363,9 +330,9 @@ jobs:
     steps:
     - name: Check build status
       run: |
-        # "${{ needs.integration-test.result }}" == "success" && 
         if [[ "${{ needs.lint-and-format.result }}" == "success" && 
               "${{ needs.test-suite.result }}" == "success" && 
+              "${{ needs.integration-test.result }}" == "success" && 
               "${{ needs.performance-benchmark.result }}" == "success" ]]; then
           echo "🎉 All checks passed! Build is successful."
         else
