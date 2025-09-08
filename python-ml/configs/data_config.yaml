@@ -1,6 +1,6 @@
 # MovieRecs Data Pipeline Configuration
 data_sources:
-  primary: "movielens"  # Primary data source: movielens, tmdb
+  primary: "tmdb"  # Primary data source: movielens, tmdb
   backup: "local_fallback"  # Backup when primary fails
   
   # MovieLens 25M Dataset

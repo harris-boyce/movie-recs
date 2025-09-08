@@ -137,6 +137,7 @@ jobs:
         MOVIERECS_MIN_MOVIES: '1'
         MOVIERECS_OUTPUT_DIR: 'data'
         PYTHONPATH: 'src'
+        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
       run: |
         python -c "
         from src.data_prep import DataPipeline
